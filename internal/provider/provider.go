@@ -18,8 +18,7 @@ func Provider() *schema.Provider {
 			"url": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("PIHOLE_URL", nil),
-				Default:     "http://pi.hole",
+				DefaultFunc: schema.EnvDefaultFunc("PIHOLE_URL", "http://pi.hole"),
 			},
 		},
 
