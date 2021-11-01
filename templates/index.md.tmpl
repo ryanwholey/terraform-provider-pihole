@@ -1,0 +1,17 @@
+---
+layout: ""
+page_title: "Provider: Pi-hole"
+description: A Terraform provider to manage Pi-hole resources
+---
+
+# Pi-hole Provider
+
+The [Pi-hole](https://pi-hole.net) provider is used to manage Pi-hole resources. The provider should be configured with the Pi-hole URL and the admin password (not the hashed web password).
+
+Use the navigation to the left to read about the available resources.
+
+## Example Usage
+
+{{tffile "examples/provider/provider.tf"}}
+
+{{ .SchemaMarkdown | trimspace }}
