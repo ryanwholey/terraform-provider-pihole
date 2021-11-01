@@ -23,7 +23,8 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"pihole_dns_records": dataSourceDNSRecords(),
+			"pihole_dns_records":   dataSourceDNSRecords(),
+			"pihole_cname_records": dataSourceCNAMERecords(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
