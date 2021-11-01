@@ -5,15 +5,15 @@ on:
       - main
     paths-ignore:
       - '**.md'
-      - docs/
-      - examples/
-      - templates/ 
+      - 'docs/**'
+      - 'examples/**'
+      - 'templates/**'
   pull_request:
     paths-ignore:
       - '**.md'
-      - docs/
-      - examples/
-      - templates/ 
+      - 'docs/**'
+      - 'examples/**'
+      - 'templates/**'
 jobs:
   test:
     runs-on: ubuntu-latest
