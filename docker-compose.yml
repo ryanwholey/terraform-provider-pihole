@@ -1,0 +1,13 @@
+version: "3"
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "8080:80/tcp"
+    environment:
+      TZ: 'America/Chicago'
+      WEBPASSWORD: test
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
