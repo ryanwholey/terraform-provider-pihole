@@ -1,6 +1,6 @@
 terraform {
   required_providers {
-    datadog = {
+    pihole = {
       source = "ryanwholey/pihole"
     }
   }
