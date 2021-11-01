@@ -2,8 +2,8 @@ package provider
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
-	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -63,7 +63,8 @@ func dataSourceDNSRecordsRead(ctx context.Context, d *schema.ResourceData, meta 
 		return diag.FromErr(err)
 	}
 
-	d.SetId(strconv.FormatUint(uint64(hash(idRef)), 10))
+	hash := sha256.Sum256([]byte(idRef))
+	d.SetId(fmt.Sprintf("%x", hash[:]))
 
 	return diags
 }
