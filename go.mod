@@ -1,8 +1,9 @@
-module github.com/hashicorp/terraform-provider-scaffolding
+module github.com/ryanwholey/terraform-provider-pihole
 
-go 1.15
+go 1.16
 
 require (
+	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/hashicorp/terraform-plugin-docs v0.5.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.8.0
 )

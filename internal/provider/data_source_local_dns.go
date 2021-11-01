@@ -1,0 +1,69 @@
+package provider
+
+import (
+	"context"
+	"fmt"
+	"strconv"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
+)
+
+// dataSourceDNSRecords returns a schema resource for listing pihole local DNS records
+func dataSourceDNSRecords() *schema.Resource {
+	return &schema.Resource{
+		ReadContext: dataSourceDNSRecordsRead,
+		Schema: map[string]*schema.Schema{
+			"records": {
+				Type:     schema.TypeSet,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"domain": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"ip": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+// dataSourceDNSRecordsRead lists all pihole local DNS records
+func dataSourceDNSRecordsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
+	client, ok := meta.(*pihole.Client)
+	if !ok {
+		return diag.Errorf("Could not load client in resource request")
+	}
+
+	dnsList, err := client.ListDNSRecords(ctx)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	list := make([]map[string]interface{}, len(dnsList))
+	idRef := ""
+
+	for i, r := range dnsList {
+		idRef = fmt.Sprintf("%s%s%s", idRef, r.Domain, r.IP)
+
+		list[i] = map[string]interface{}{
+			"domain": r.Domain,
+			"ip":     r.IP,
+		}
+	}
+
+	if err := d.Set("records", list); err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.SetId(strconv.FormatUint(uint64(hash(idRef)), 10))
+
+	return diags
+}
