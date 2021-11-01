@@ -23,7 +23,7 @@ resource "pihole_ad_blocker_status" "status" {
 
 ### Required
 
-- **enabled** (Boolean)
+- **enabled** (Boolean) Whether to enable the Pi-hole ad blocker
 
 ### Optional
 

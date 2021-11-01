@@ -17,13 +17,15 @@ func resourceDNSRecord() *schema.Resource {
 		DeleteContext: resourceDNSRecordDelete,
 		Schema: map[string]*schema.Schema{
 			"domain": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "DNS record domain",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"ip": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "IP address where traffic is routed to from the DNS record domain",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 		},
 	}

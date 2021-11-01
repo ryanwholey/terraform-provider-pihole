@@ -24,8 +24,8 @@ resource "pihole_dns_record" "record" {
 
 ### Required
 
-- **domain** (String)
-- **ip** (String)
+- **domain** (String) DNS record domain
+- **ip** (String) IP address where traffic is routed to from the DNS record domain
 
 ### Optional
 

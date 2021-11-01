@@ -16,17 +16,20 @@ func dataSourceDNSRecords() *schema.Resource {
 		ReadContext: dataSourceDNSRecordsRead,
 		Schema: map[string]*schema.Schema{
 			"records": {
-				Type:     schema.TypeSet,
-				Computed: true,
+				Description: "List of Pi-hole DNS records",
+				Type:        schema.TypeSet,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"domain": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "DNS record domain",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 						"ip": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "IP address where traffic is routed to from the DNS record domain",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 					},
 				},
