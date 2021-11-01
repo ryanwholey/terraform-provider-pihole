@@ -32,5 +32,5 @@ provider "pihole" {
 
 ### Optional
 
-- **password** (String)
-- **url** (String)
+- **password** (String) The admin password used to login to the admin dashboard
+- **url** (String) URL where Pi-hole is deployed

@@ -38,6 +38,10 @@ func doubleHash256(data string) string {
 
 // New returns a new pihole client
 func New(config *Config) (*Client, error) {
+	if config.Password == "" {
+		return nil, fmt.Errorf("failed to create new client, password not be empty")
+	}
+
 	client := &Client{
 		URL:         config.URL,
 		UserAgent:   config.UserAgent,
