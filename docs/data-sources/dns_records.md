@@ -25,7 +25,7 @@ data "pihole_dns_records" "records" {}
 
 ### Read-Only
 
-- **records** (Set of Object) (see [below for nested schema](#nestedatt--records))
+- **records** (Set of Object) List of Pi-hole DNS records (see [below for nested schema](#nestedatt--records))
 
 <a id="nestedatt--records"></a>
 ### Nested Schema for `records`

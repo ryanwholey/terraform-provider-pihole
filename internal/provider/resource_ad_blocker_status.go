@@ -17,8 +17,9 @@ func resourceAdBlockerStatus() *schema.Resource {
 		DeleteContext: resourceAdBlockerStatusDelete,
 		Schema: map[string]*schema.Schema{
 			"enabled": {
-				Type:     schema.TypeBool,
-				Required: true,
+				Description: "Whether to enable the Pi-hole ad blocker",
+				Type:        schema.TypeBool,
+				Required:    true,
 			},
 		},
 	}

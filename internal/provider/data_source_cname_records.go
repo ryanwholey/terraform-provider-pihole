@@ -16,17 +16,20 @@ func dataSourceCNAMERecords() *schema.Resource {
 		ReadContext: dataSourceCNAMERecordsRead,
 		Schema: map[string]*schema.Schema{
 			"records": {
-				Type:     schema.TypeSet,
-				Computed: true,
+				Description: "List of CNAME Pi-hole records",
+				Type:        schema.TypeSet,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"domain": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "CNAME record domain",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 						"target": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Description: "CNAME target value where traffic is routed to from the domain",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 					},
 				},
