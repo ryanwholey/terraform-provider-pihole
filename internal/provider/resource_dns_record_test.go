@@ -66,12 +66,12 @@ func testAccCheckLocalDNSDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*pihole.Client)
 
 	for _, r := range s.RootModule().Resources {
-		if r.Type != "pihole_local_dns" {
+		if r.Type != "pihole_dns_record" {
 			continue
 		}
 
 		if _, err := client.GetDNSRecord(context.Background(), r.Primary.ID); err != nil {
-			if err.Error() != fmt.Sprintf("record %q not found", r.Primary.ID) {
+			if _, ok := err.(*pihole.NotFoundError); !ok {
 				return err
 			}
 		}

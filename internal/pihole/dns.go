@@ -104,8 +104,7 @@ func (c Client) GetDNSRecord(ctx context.Context, domain string) (*DNSRecord, er
 		}
 	}
 
-	// TODO: use custom error
-	return nil, fmt.Errorf("record %q not found", domain)
+	return nil, NewNotFoundError(fmt.Sprintf("record %q not found", domain))
 }
 
 // UpdateDNSRecord deletes a pihole local DNS record by domain name
