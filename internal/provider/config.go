@@ -2,10 +2,8 @@ package provider
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
-	"github.com/ryanwholey/terraform-provider-pihole/internal/version"
 )
 
 // Config defines the configuration options for the Pihole client
@@ -22,14 +20,9 @@ type Config struct {
 
 func (c Config) Client(ctx context.Context) (*pihole.Client, error) {
 	config := &pihole.Config{
-		URL:      c.URL,
-		Password: c.Password,
-		// TODO: Use more conventional UserAgent input
-		UserAgent: fmt.Sprintf("%s-%s", "terraform-provider-pihole", version.ProviderVersion),
-	}
-
-	if config.Password == "" {
-		return nil, fmt.Errorf("password must be set in the provider")
+		URL:       c.URL,
+		Password:  c.Password,
+		UserAgent: c.UserAgent,
 	}
 
 	client, err := pihole.New(config)
