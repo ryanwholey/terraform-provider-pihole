@@ -28,10 +28,6 @@ func (c Config) Client(ctx context.Context) (*pihole.Client, error) {
 		UserAgent: fmt.Sprintf("%s-%s", "terraform-provider-pihole", version.ProviderVersion),
 	}
 
-	if config.URL == "" {
-		config.URL = "http://pi.hole"
-	}
-
 	if config.Password == "" {
 		return nil, fmt.Errorf("password must be set in the provider")
 	}

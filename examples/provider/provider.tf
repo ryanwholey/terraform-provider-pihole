@@ -7,6 +7,6 @@ terraform {
 }
 
 provider "pihole" {
-  url      = "https://pihole.ryanwholey.com" # PIHOLE_URL
-  password = var.pihole_password             # PIHOLE_PASSWORD
+  url      = "https://pihole.domain.com" # PIHOLE_URL
+  password = var.pihole_password         # PIHOLE_PASSWORD
 }
