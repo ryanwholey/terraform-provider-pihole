@@ -15,11 +15,10 @@ func Provider() *schema.Provider {
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("PIHOLE_PASSWORD", nil),
 			},
-
 			"url": {
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("PIHOLE_URL", nil),
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("PIHOLE_URL", "http://pi.hole"),
 			},
 		},
 
