@@ -3,9 +3,7 @@ package pihole
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"net/url"
-	"strconv"
 	"time"
 )
 
@@ -25,7 +23,7 @@ type GroupResponse struct {
 type GroupList []*Group
 
 type Group struct {
-	ID           string
+	ID           int64
 	Enabled      bool
 	Name         string
 	DateAdded    time.Time
@@ -47,7 +45,7 @@ func (grl GroupResponseList) ToGroupList() GroupList {
 // ToGroup converts a GroupResponse to a Group
 func (gr GroupResponse) ToGroup() *Group {
 	return &Group{
-		ID:           strconv.FormatInt(gr.ID, 10),
+		ID:           gr.ID,
 		Enabled:      gr.Enabled == 1,
 		Name:         gr.Name,
 		DateAdded:    time.Unix(gr.DateAdded, 0),
@@ -77,15 +75,10 @@ func (c Client) ListGroups(ctx context.Context) (GroupList, error) {
 		return nil, err
 	}
 
-	for _, g := range groupRes.Data {
-		log.Print("Modified", g.DateModified)
-		log.Print("Description", g.Description)
-	}
-
 	return groupRes.ToGroupList(), nil
 }
 
-// // CreateDNSRecord creates a pihole DNS record entry
+// // CreateGroup creates a Pi-hole DNS record entry
 // func (c Client) CreateDNSRecord(ctx context.Context, record *DNSRecord) (*DNSRecord, error) {
 // 	req, err := c.RequestWithSession(ctx, "POST", "/admin/scripts/pi-hole/php/customdns.php", &url.Values{
 // 		"action": []string{"add"},

@@ -45,11 +45,6 @@ func dataSourceCNAMERecordsRead(ctx context.Context, d *schema.ResourceData, met
 		return diag.Errorf("Could not load client in resource request")
 	}
 
-	_, err := client.ListGroups(ctx)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
 	cnameList, err := client.ListCNAMERecords(ctx)
 	if err != nil {
 		return diag.FromErr(err)
