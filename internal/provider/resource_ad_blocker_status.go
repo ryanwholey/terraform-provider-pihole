@@ -8,7 +8,7 @@ import (
 	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
 )
 
-// resourceAdBlockerStatus returns the local DNS Terraform resource management configuration
+// resourceAdBlockerStatus returns the DNS Terraform resource management configuration
 func resourceAdBlockerStatus() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAdBlockerStatusCreate,
@@ -25,7 +25,7 @@ func resourceAdBlockerStatus() *schema.Resource {
 	}
 }
 
-// rresourceAdBlockerStatusCreate handles the creation a local DNS record via Terraform
+// rresourceAdBlockerStatusCreate handles the creation a DNS record via Terraform
 func resourceAdBlockerStatusCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
 	client, ok := meta.(*pihole.Client)
 	if !ok {
@@ -42,7 +42,7 @@ func resourceAdBlockerStatusCreate(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-// resourceAdBlockerStatusRead finds a local DNS record based on the associated domain ID
+// resourceAdBlockerStatusRead finds a DNS record based on the associated domain ID
 func resourceAdBlockerStatusRead(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
 	client, ok := meta.(*pihole.Client)
 	if !ok {
@@ -61,7 +61,7 @@ func resourceAdBlockerStatusRead(ctx context.Context, d *schema.ResourceData, me
 	return diags
 }
 
-// resourceAdBlockerStatusUpdate handles updates of a local DNS record via Terraform
+// resourceAdBlockerStatusUpdate handles updates of a DNS record via Terraform
 func resourceAdBlockerStatusUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
 	client, ok := meta.(*pihole.Client)
 	if !ok {
@@ -80,7 +80,7 @@ func resourceAdBlockerStatusUpdate(ctx context.Context, d *schema.ResourceData, 
 	return resourceAdBlockerStatusRead(ctx, d, meta)
 }
 
-// resourceAdBlockerStatusDelete handles the deletion of a local DNS record via Terraform
+// resourceAdBlockerStatusDelete handles the deletion of a DNS record via Terraform
 func resourceAdBlockerStatusDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
 	d.SetId("")
 

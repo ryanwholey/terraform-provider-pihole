@@ -10,7 +10,7 @@ import (
 	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
 )
 
-// dataSourceDNSRecords returns a schema resource for listing pihole local DNS records
+// dataSourceDNSRecords returns a schema resource for listing Pi-hole local DNS records
 func dataSourceDNSRecords() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceDNSRecordsRead,
@@ -38,7 +38,7 @@ func dataSourceDNSRecords() *schema.Resource {
 	}
 }
 
-// dataSourceDNSRecordsRead lists all pihole local DNS records
+// dataSourceDNSRecordsRead lists all Pi-hole local DNS records
 func dataSourceDNSRecordsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
 	client, ok := meta.(*pihole.Client)
 	if !ok {
