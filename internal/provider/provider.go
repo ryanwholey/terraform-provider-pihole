@@ -28,6 +28,7 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"pihole_cname_records": dataSourceCNAMERecords(),
 			"pihole_dns_records":   dataSourceDNSRecords(),
+			"pihole_groups":        dataSourceGroups(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
