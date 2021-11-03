@@ -35,6 +35,7 @@ func Provider() *schema.Provider {
 			"pihole_ad_blocker_status": resourceAdBlockerStatus(),
 			"pihole_cname_record":      resourceCNAMERecord(),
 			"pihole_dns_record":        resourceDNSRecord(),
+			"pihole_group":             resourceGroup(),
 		},
 	}
 

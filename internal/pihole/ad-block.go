@@ -59,6 +59,8 @@ func (c Client) SetAdBlockEnabled(ctx context.Context, enable bool) (*EnableAdBl
 		return nil, err
 	}
 
+	defer res.Body.Close()
+
 	var blocked EnableAdBlockResponse
 	if err = json.NewDecoder(res.Body).Decode(&blocked); err != nil {
 		return nil, err

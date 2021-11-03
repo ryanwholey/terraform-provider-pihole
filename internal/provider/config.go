@@ -8,10 +8,10 @@ import (
 
 // Config defines the configuration options for the Pihole client
 type Config struct {
-	// The Pihole URL
+	// The Pi-hole URL
 	URL string
 
-	// The Pihole admin password
+	// The Pi-hole admin password
 	Password string
 
 	// UserAgent for requests
