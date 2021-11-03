@@ -2,7 +2,10 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -12,6 +15,7 @@ import (
 // resorceGroup returns the Terraform resource management configuration for a Pi-hole group
 func resourceGroup() *schema.Resource {
 	return &schema.Resource{
+		Description:   "A construct to associate clients with allow/deny lists and/or adlists",
 		CreateContext: resourceGroupCreate,
 		ReadContext:   resourceGroupRead,
 		UpdateContext: resourceGroupUpdate,
@@ -22,6 +26,16 @@ func resourceGroup() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
+				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+					name := strings.TrimSpace(val.(string))
+					validName := regexp.MustCompile(`^\S*$`)
+
+					if !validName.MatchString(name) {
+						errs = append(errs, fmt.Errorf("%s field cannot contain spaces: %q", key, name))
+					}
+
+					return
+				},
 			},
 			"description": {
 				Description: "Group description",
@@ -60,7 +74,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, meta inter
 	if !enabled {
 		_, err := client.UpdateGroup(ctx, &pihole.GroupUpdateRequest{
 			Name:        name,
-			Enabled:     enabled,
+			Enabled:     &enabled,
 			Description: description,
 		})
 		if err != nil {
@@ -104,7 +118,7 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interfa
 	return diags
 }
 
-// resourceDNSRecordUpdate handles updates of a Pi-hole group
+// resourceGroupUpdate handles updates of a Pi-hole group
 func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
 	client, ok := meta.(*pihole.Client)
 	if !ok {
@@ -113,7 +127,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 
 	group, err := client.UpdateGroup(ctx, &pihole.GroupUpdateRequest{
 		Name:        d.Get("name").(string),
-		Enabled:     d.Get("enabled").(bool),
+		Enabled:     pihole.Bool(d.Get("enabled").(bool)),
 		Description: d.Get("description").(string),
 	})
 	if err != nil {
@@ -132,9 +146,9 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 		return diag.FromErr(err)
 	}
 
-	d.SetId(strconv.FormatUint(uint64(group.ID), 10))
+	d.SetId(strconv.FormatInt(group.ID, 10))
 
-	return resourceDNSRecordRead(ctx, d, meta)
+	return resourceGroupRead(ctx, d, meta)
 }
 
 // resourceGroupDelete handles the deletion of a Pi-hole group

@@ -15,6 +15,7 @@ type Config struct {
 	Password  string
 	URL       string
 	UserAgent string
+	Client    *http.Client
 }
 
 type Client struct {
@@ -46,8 +47,12 @@ func New(config *Config) (*Client, error) {
 		URL:         config.URL,
 		UserAgent:   config.UserAgent,
 		password:    config.Password,
-		client:      &http.Client{},
+		client:      config.Client,
 		webPassword: doubleHash256(config.Password),
+	}
+
+	if client.client == nil {
+		client.client = &http.Client{}
 	}
 
 	return client, nil
@@ -170,4 +175,9 @@ func (c *Client) login(ctx context.Context) error {
 	c.token = doc.Find("#token").Text()
 
 	return nil
+}
+
+// Bool is a helper to return pointer booleans
+func Bool(b bool) *bool {
+	return &b
 }

@@ -37,7 +37,7 @@ type Group struct {
 
 type GroupUpdateRequest struct {
 	Name        string
-	Enabled     bool
+	Enabled     *bool
 	Description string
 }
 
@@ -129,7 +129,7 @@ func (c Client) CreateGroup(ctx context.Context, gr *GroupCreateRequest) (*Group
 	}
 
 	req, err := c.RequestWithSession(ctx, "POST", "/admin/scripts/pi-hole/php/groups.php", &url.Values{
-		"action": []string{"add_groups"},
+		"action": []string{"add_group"},
 		"name":   []string{name},
 		"desc":   []string{gr.Description},
 	})
@@ -141,6 +141,8 @@ func (c Client) CreateGroup(ctx context.Context, gr *GroupCreateRequest) (*Group
 	if err != nil {
 		return nil, err
 	}
+
+	defer res.Body.Close()
 
 	var created GroupBasicResponse
 	if err = json.NewDecoder(res.Body).Decode(&created); err != nil {
@@ -161,9 +163,9 @@ func (c Client) UpdateGroup(ctx context.Context, gr *GroupUpdateRequest) (*Group
 		return nil, err
 	}
 
-	enabled := "0"
-	if gr.Enabled {
-		enabled = "1"
+	enabled := "1"
+	if gr.Enabled != nil && !*gr.Enabled {
+		enabled = "0"
 	}
 
 	req, err := c.RequestWithSession(ctx, "POST", "/admin/scripts/pi-hole/php/groups.php", &url.Values{
@@ -171,7 +173,7 @@ func (c Client) UpdateGroup(ctx context.Context, gr *GroupUpdateRequest) (*Group
 		"name":   []string{gr.Name},
 		"desc":   []string{gr.Description},
 		"status": []string{enabled},
-		"id":     []string{strconv.FormatUint(uint64(original.ID), 10)},
+		"id":     []string{strconv.FormatInt(original.ID, 10)},
 	})
 	if err != nil {
 		return nil, err
@@ -181,6 +183,8 @@ func (c Client) UpdateGroup(ctx context.Context, gr *GroupUpdateRequest) (*Group
 	if err != nil {
 		return nil, err
 	}
+
+	defer res.Body.Close()
 
 	var updated GroupBasicResponse
 	if err = json.NewDecoder(res.Body).Decode(&updated); err != nil {
@@ -202,8 +206,8 @@ func (c Client) DeleteGroup(ctx context.Context, name string) error {
 	}
 
 	req, err := c.RequestWithSession(ctx, "POST", "/admin/scripts/pi-hole/php/groups.php", &url.Values{
-		"action": []string{"edit_group"},
-		"id":     []string{strconv.FormatUint(uint64(toDelete.ID), 10)},
+		"action": []string{"delete_group"},
+		"id":     []string{strconv.FormatInt(toDelete.ID, 10)},
 	})
 	if err != nil {
 		return err
@@ -213,6 +217,8 @@ func (c Client) DeleteGroup(ctx context.Context, name string) error {
 	if err != nil {
 		return err
 	}
+
+	defer res.Body.Close()
 
 	var deleted GroupBasicResponse
 	if err = json.NewDecoder(res.Body).Decode(&deleted); err != nil {
