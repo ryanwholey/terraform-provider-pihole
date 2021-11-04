@@ -98,6 +98,11 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interfa
 
 	group, err := client.GetGroup(ctx, name)
 	if err != nil {
+		if _, ok := err.(*pihole.NotFoundError); ok {
+			d.SetId("")
+			return nil
+		}
+
 		return diag.FromErr(err)
 	}
 
