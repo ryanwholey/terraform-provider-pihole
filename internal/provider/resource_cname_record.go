@@ -64,6 +64,11 @@ func resourceCNAMERecordRead(ctx context.Context, d *schema.ResourceData, meta i
 
 	record, err := client.GetCNAMERecord(ctx, d.Id())
 	if err != nil {
+		if _, ok := err.(*pihole.NotFoundError); ok {
+			d.SetId("")
+			return nil
+		}
+
 		return diag.FromErr(err)
 	}
 

@@ -63,6 +63,11 @@ func resourceDNSRecordRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	record, err := client.GetDNSRecord(ctx, d.Id())
 	if err != nil {
+		if _, ok := err.(*pihole.NotFoundError); ok {
+			d.SetId("")
+			return nil
+		}
+
 		return diag.FromErr(err)
 	}
 
