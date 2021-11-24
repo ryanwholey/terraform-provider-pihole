@@ -25,7 +25,7 @@ data "pihole_cname_records" "records" {}
 
 ### Read-Only
 
-- **groups** (Set of Object) List of groups to manage list of clients and block lists (see [below for nested schema](#nestedatt--groups))
+- **groups** (Set of Object) List of groups to manage client lists and block lists (see [below for nested schema](#nestedatt--groups))
 
 <a id="nestedatt--groups"></a>
 ### Nested Schema for `groups`
