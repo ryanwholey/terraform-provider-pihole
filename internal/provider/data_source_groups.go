@@ -18,7 +18,7 @@ func dataSourceGroups() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"groups": {
 				Type:        schema.TypeSet,
-				Description: "List of groups to manage list of clients and block lists",
+				Description: "List of groups to manage client lists and block lists",
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
