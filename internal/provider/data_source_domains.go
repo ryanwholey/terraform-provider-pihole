@@ -87,12 +87,10 @@ func dataSourceDomainsRead(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.Errorf("Could not load client in resource request")
 	}
 
-	domainType, ok := d.Get("type").(string)
-	if !ok {
-		domainType = ""
-	}
-
 	opts := pihole.ListDomainsOptions{}
+
+	domainType := d.Get("type").(string)
+
 	if domainType != "" {
 		opts.Type = domainType
 	}
