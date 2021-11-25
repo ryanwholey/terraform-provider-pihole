@@ -6,6 +6,31 @@
 
 Pi-hole is an open source project and can be found at https://github.com/pi-hole/pi-hole.
 
+## Usage
+
+This provider is published to the Terraform Provider registry.
+
+```tf
+terraform {
+  required_providers {
+    pihole = {
+      source  = "ryanwholey/pihole"
+      version = "x.x.x"
+    }
+  }
+}
+
+Configure the provider with credentials, or pass environment variables.
+
+```tf
+provider "pihole" {
+  url      = "https://pihole.domain.com" # PIHOLE_URL
+  password = var.pihole_password         # PIHOLE_PASSWORD
+}
+```
+
+See the [provider documentation](https://registry.terraform.io/providers/ryanwholey/pihole/latest/docs) for more details.
+
 ## Provider Development
 
 There are a few ways to configure local providers. See the somewhat obscure [Terraform plugin installation documentation](https://www.terraform.io/docs/cli/commands/init.html#plugin-installation) for a potential recommended way. 
