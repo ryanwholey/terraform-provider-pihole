@@ -19,6 +19,7 @@ terraform {
     }
   }
 }
+```
 
 Configure the provider with credentials, or pass environment variables.
 
