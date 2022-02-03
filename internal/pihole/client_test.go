@@ -38,7 +38,7 @@ func TestClient(t *testing.T) {
 		mux := http.NewServeMux()
 
 		mux.HandleFunc("/admin/index.php", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(`<div id="token">token</div>`))
+			w.Write([]byte(`<div id="token">token</div>`)) //nolint:errcheck
 		})
 
 		server := httptest.NewServer(mux)
@@ -61,7 +61,7 @@ func TestClient(t *testing.T) {
 
 		mux.HandleFunc("/admin/index.php", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Set-Cookie", "malformed")
-			w.Write([]byte(`<div id="token">token</div>`))
+			w.Write([]byte(`<div id="token">token</div>`)) //nolint:errcheck
 		})
 
 		server := httptest.NewServer(mux)
@@ -84,7 +84,7 @@ func TestClient(t *testing.T) {
 
 		mux.HandleFunc("/admin/index.php", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Set-Cookie", "session-id=ID;")
-			w.Write([]byte(``))
+			w.Write([]byte(``)) //nolint:errcheck
 		})
 
 		server := httptest.NewServer(mux)
@@ -107,7 +107,7 @@ func TestClient(t *testing.T) {
 
 		mux.HandleFunc("/admin/index.php", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Set-Cookie", "session-id=ID;")
-			w.Write([]byte(`<div id="token">token</div>`))
+			w.Write([]byte(`<div id="token">token</div>`)) //nolint:errcheck
 		})
 
 		server := httptest.NewServer(mux)
