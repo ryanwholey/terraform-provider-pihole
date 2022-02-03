@@ -38,11 +38,7 @@ func doubleHash256(data string) string {
 }
 
 // New returns a new pihole client
-func New(config *Config) (*Client, error) {
-	if config.Password == "" {
-		return nil, fmt.Errorf("failed to create new client, password not be empty")
-	}
-
+func New(config Config) *Client {
 	client := &Client{
 		URL:         config.URL,
 		UserAgent:   config.UserAgent,
@@ -55,27 +51,29 @@ func New(config *Config) (*Client, error) {
 		client.client = &http.Client{}
 	}
 
-	return client, nil
+	return client
 }
 
 // Init sets fields on the client which are a product of pihole network requests or other side effects
 func (c *Client) Init(ctx context.Context) error {
-	return c.login(ctx)
-}
-
-// Validate returns an error if any of the required fields on the client are empty
-func (c *Client) Validate() error {
 	if c.password == "" {
-		return fmt.Errorf("failed to validate client: password is not set")
+		return fmt.Errorf("%w: password is not set", ErrClientValidationFailed)
 	}
+
 	if c.webPassword == "" {
-		return fmt.Errorf("failed to validate client: webPassword is not set")
+		return fmt.Errorf("%w: webPassword is not set", ErrClientValidationFailed)
 	}
+
+	if err := c.login(ctx); err != nil {
+		return fmt.Errorf("%w: %s", ErrLoginFailed, err)
+	}
+
 	if c.token == "" {
-		return fmt.Errorf("failed to validate client: token is not set")
+		return fmt.Errorf("%w: token not set", ErrClientValidationFailed)
 	}
+
 	if c.sessionID == "" {
-		return fmt.Errorf("failed to validate client: sessionID is not set")
+		return fmt.Errorf("%w: sessionID not set", ErrClientValidationFailed)
 	}
 
 	return nil
@@ -154,26 +152,39 @@ func (c *Client) login(ctx context.Context) error {
 
 	req, err := c.Request(ctx, "POST", "/admin/index.php?login=", data)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to format login request: %s", err)
 	}
 
 	res, err := c.client.Do(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("login request failed: %s", err)
 	}
 
 	defer res.Body.Close()
 
-	sessionID := strings.Split(strings.Split(res.Header.Get("Set-Cookie"), "=")[1], ";")[0]
-	c.sessionID = sessionID
+	sessionCookie := res.Header.Get("Set-Cookie")
+	if sessionCookie == "" {
+		return fmt.Errorf("session ID not found in response")
+	}
+
+	parsedCookie := strings.Split(sessionCookie, "=")
+	if len(parsedCookie) < 2 {
+		return fmt.Errorf("malformed session cookie")
+	}
+
+	c.sessionID = strings.Split(parsedCookie[1], ";")[0]
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to parse login response: %s", err)
 	}
 
-	c.token = doc.Find("#token").Text()
+	token := doc.Find("#token").Text()
+	if token == "" {
+		return fmt.Errorf("invalid password")
+	}
 
+	c.token = token
 	return nil
 }
 

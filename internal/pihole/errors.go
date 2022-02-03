@@ -1,5 +1,7 @@
 package pihole
 
+import "errors"
+
 type NotFoundError struct {
 	err string
 }
@@ -18,3 +20,10 @@ func (e NotFoundError) Is(target error) bool {
 func (e *NotFoundError) Error() string {
 	return e.err
 }
+
+var (
+	// ErrLoginFailed is returned when a login attempt fails
+	ErrLoginFailed = errors.New("login failed")
+	// ErrClientValidationFailed
+	ErrClientValidationFailed = errors.New("client validation failed")
+)
