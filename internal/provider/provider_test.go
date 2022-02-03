@@ -13,7 +13,7 @@ func testAccPreCheck(t *testing.T) {
 	}
 
 	if v := os.Getenv("PIHOLE_PASSWORD"); v == "" {
-		t.Fatal("PIHOLE_TOKEN must be set for acceptance tests")
+		t.Fatal("PIHOLE_PASSWORD must be set for acceptance tests")
 	}
 }
 
