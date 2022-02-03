@@ -19,18 +19,15 @@ type Config struct {
 }
 
 func (c Config) Client(ctx context.Context) (*pihole.Client, error) {
-	config := &pihole.Config{
+	config := pihole.Config{
 		URL:       c.URL,
 		Password:  c.Password,
 		UserAgent: c.UserAgent,
 	}
 
-	client, err := pihole.New(config)
-	if err != nil {
-		return nil, err
-	}
+	client := pihole.New(config)
 
-	if err = client.Init(ctx); err != nil {
+	if err := client.Init(ctx); err != nil {
 		return nil, err
 	}
 
