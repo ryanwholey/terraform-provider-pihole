@@ -16,7 +16,6 @@ A construct to associate clients with allow/deny lists and/or adlists
 resource "pihole_group" "group" {
   name        = "relaxed"
   description = "A group for clients with more relaxed allow/deny rules"
-  enabled     = true
 }
 ```
 
@@ -33,4 +32,10 @@ resource "pihole_group" "group" {
 - **enabled** (Boolean) Whether to enable the group
 - **id** (String) The ID of this resource.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+terraform import pihole_group.group 1
+```

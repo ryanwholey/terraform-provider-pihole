@@ -31,4 +31,10 @@ resource "pihole_cname_record" "record" {
 
 - **id** (String) The ID of this resource.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+terraform import pihole_cname_record.record foo.com
+```

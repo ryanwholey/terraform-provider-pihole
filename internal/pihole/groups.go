@@ -108,6 +108,22 @@ func (c Client) GetGroup(ctx context.Context, name string) (*Group, error) {
 	return nil, NewNotFoundError(fmt.Sprintf("Group with name %q not found", name))
 }
 
+// GetGroupByID returns a Pi-hole group by ID
+func (c Client) GetGroupByID(ctx context.Context, id int64) (*Group, error) {
+	groups, err := c.ListGroups(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, g := range groups {
+		if g.ID == id {
+			return g, nil
+		}
+	}
+
+	return nil, NewNotFoundError(fmt.Sprintf("Group with ID %q not found", id))
+}
+
 // validName indicates whether the name given to the group is valid
 func validGroupName(name string) bool {
 	validName := regexp.MustCompile(`^\S*$`)

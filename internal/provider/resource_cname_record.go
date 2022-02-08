@@ -16,6 +16,9 @@ func resourceCNAMERecord() *schema.Resource {
 		ReadContext:   resourceCNAMERecordRead,
 		UpdateContext: resourceCNAMERecordUpdate,
 		DeleteContext: resourceCNAMERecordDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"domain": {
 				Description: "Domain to create a CNAME record for",

@@ -20,6 +20,9 @@ func resourceGroup() *schema.Resource {
 		ReadContext:   resourceGroupRead,
 		UpdateContext: resourceGroupUpdate,
 		DeleteContext: resourceGroupDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Description: "Group name",
@@ -82,7 +85,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, meta inter
 		}
 	}
 
-	d.SetId(strconv.FormatUint(uint64(group.ID), 10))
+	d.SetId(strconv.FormatInt(group.ID, 10))
 
 	return diags
 }
@@ -94,9 +97,12 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interfa
 		return diag.Errorf("Could not load client in resource request")
 	}
 
-	name := d.Get("name").(string)
+	id, err := strconv.ParseInt(d.Id(), 10, 64)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
-	group, err := client.GetGroup(ctx, name)
+	group, err := client.GetGroupByID(ctx, id)
 	if err != nil {
 		if _, ok := err.(*pihole.NotFoundError); ok {
 			d.SetId("")
@@ -118,7 +124,7 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interfa
 		return diag.FromErr(err)
 	}
 
-	d.SetId(strconv.FormatUint(uint64(group.ID), 10))
+	d.SetId(strconv.FormatInt(group.ID, 10))
 
 	return diags
 }
