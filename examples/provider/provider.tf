@@ -14,6 +14,6 @@ provider "pihole" {
 provider "pihole" {
   url = "https://pihole.domain.com" # PIHOLE_URL
 
-  # Experimental, requires Pi-hole Web Interface >= 5.11
+  # Experimental, requires Pi-hole Web Interface >= 5.11.0
   api_token = var.pihole_api_token # PIHOLE_API_TOKEN
 }

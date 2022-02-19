@@ -15,7 +15,7 @@ func Provider() *schema.Provider {
 				Type:         schema.TypeString,
 				Optional:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PIHOLE_PASSWORD", nil),
-				Description:  "The admin password used to login to the admin dashboard. Conflicts with api_token.",
+				Description:  "The admin password used to login to the admin dashboard. Conflicts with `api_token`.",
 				ExactlyOneOf: []string{"api_token", "password"},
 			},
 			"url": {
@@ -28,7 +28,7 @@ func Provider() *schema.Provider {
 				Type:         schema.TypeString,
 				Optional:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("PIHOLE_API_TOKEN", nil),
-				Description:  "Experimental: Pi-hole API token. Conflicts with password.",
+				Description:  "Experimental: Pi-hole API token. Conflicts with `password`.",
 				ExactlyOneOf: []string{"api_token", "password"},
 			},
 		},
