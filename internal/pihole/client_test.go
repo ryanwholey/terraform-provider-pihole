@@ -10,14 +10,16 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	t.Run("Fail client validation if password is not set", func(t *testing.T) {
+	t.Run("Fail login if URL is not set", func(t *testing.T) {
 		t.Parallel()
 
-		client := New(Config{})
+		client := New(Config{
+			Password: "test",
+		})
 
 		err := client.Init(context.Background())
 		require.ErrorIs(t, err, ErrClientValidationFailed)
-		require.Contains(t, err.Error(), "password is not set")
+		require.Contains(t, err.Error(), "Pi-hole URL is not set")
 	})
 
 	t.Run("Fail login if login http request fails", func(t *testing.T) {
@@ -25,6 +27,7 @@ func TestClient(t *testing.T) {
 
 		client := New(Config{
 			Password: "test",
+			URL:      "fake-url",
 		})
 
 		err := client.Init(context.Background())

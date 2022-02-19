@@ -23,6 +23,10 @@ type EnableAdBlock struct {
 
 // GetAdBlockerStatus returns whether pihole ad blocking is enabled or not
 func (c Client) GetAdBlockerStatus(ctx context.Context) (*EnableAdBlock, error) {
+	if c.tokenClient != nil {
+		return nil, fmt.Errorf("%w: set ad blocker status", ErrNotImplementedTokenClient)
+	}
+
 	req, err := c.Request(ctx, "GET", "/admin/api.php?status", nil)
 	if err != nil {
 		return nil, err
@@ -44,6 +48,10 @@ func (c Client) GetAdBlockerStatus(ctx context.Context) (*EnableAdBlock, error) 
 
 // SetAdBlockEnabled sets whether pihole ad blocking is enabled or not
 func (c Client) SetAdBlockEnabled(ctx context.Context, enable bool) (*EnableAdBlock, error) {
+	if c.tokenClient != nil {
+		return nil, fmt.Errorf("%w: set ad blocker status", ErrNotImplementedTokenClient)
+	}
+
 	enabledParam := "enable"
 	if !enable {
 		enabledParam = "disable"

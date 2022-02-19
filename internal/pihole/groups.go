@@ -71,6 +71,10 @@ func (gr GroupResponse) ToGroup() *Group {
 
 // ListGroups returns the list of gravity DB groups
 func (c Client) ListGroups(ctx context.Context) (GroupList, error) {
+	if c.tokenClient != nil {
+		return nil, fmt.Errorf("%w: list groups", ErrNotImplementedTokenClient)
+	}
+
 	req, err := c.RequestWithSession(ctx, "POST", "/admin/scripts/pi-hole/php/groups.php", &url.Values{
 		"action": []string{"get_groups"},
 	})
@@ -95,6 +99,10 @@ func (c Client) ListGroups(ctx context.Context) (GroupList, error) {
 
 // GetGroup returns a Pi-hole group by name
 func (c Client) GetGroup(ctx context.Context, name string) (*Group, error) {
+	if c.tokenClient != nil {
+		return nil, fmt.Errorf("%w: get groups", ErrNotImplementedTokenClient)
+	}
+
 	groups, err := c.ListGroups(ctx)
 	if err != nil {
 		return nil, err
@@ -110,6 +118,10 @@ func (c Client) GetGroup(ctx context.Context, name string) (*Group, error) {
 
 // GetGroupByID returns a Pi-hole group by ID
 func (c Client) GetGroupByID(ctx context.Context, id int64) (*Group, error) {
+	if c.tokenClient != nil {
+		return nil, fmt.Errorf("%w: get group", ErrNotImplementedTokenClient)
+	}
+
 	groups, err := c.ListGroups(ctx)
 	if err != nil {
 		return nil, err
@@ -138,6 +150,10 @@ type GroupBasicResponse struct {
 
 // CreateGroup creates a group with the passed attributes
 func (c Client) CreateGroup(ctx context.Context, gr *GroupCreateRequest) (*Group, error) {
+	if c.tokenClient != nil {
+		return nil, fmt.Errorf("%w: create group", ErrNotImplementedTokenClient)
+	}
+
 	name := strings.TrimSpace(gr.Name)
 
 	if !validGroupName(name) {
@@ -174,6 +190,10 @@ func (c Client) CreateGroup(ctx context.Context, gr *GroupCreateRequest) (*Group
 
 // UpdateGroup updates a group resource with the passed attribute
 func (c Client) UpdateGroup(ctx context.Context, gr *GroupUpdateRequest) (*Group, error) {
+	if c.tokenClient != nil {
+		return nil, fmt.Errorf("%w: update group", ErrNotImplementedTokenClient)
+	}
+
 	original, err := c.GetGroup(ctx, gr.Name)
 	if err != nil {
 		return nil, err
@@ -216,6 +236,10 @@ func (c Client) UpdateGroup(ctx context.Context, gr *GroupUpdateRequest) (*Group
 
 // DeleteGroup deletes a group
 func (c Client) DeleteGroup(ctx context.Context, name string) error {
+	if c.tokenClient != nil {
+		return fmt.Errorf("%w: delete group", ErrNotImplementedTokenClient)
+	}
+
 	toDelete, err := c.GetGroup(ctx, name)
 	if err != nil {
 		return err

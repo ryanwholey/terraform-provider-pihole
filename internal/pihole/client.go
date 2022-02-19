@@ -3,12 +3,14 @@ package pihole
 import (
 	"context"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	pihole "github.com/ryanwholey/go-pihole"
 )
 
 type Config struct {
@@ -16,6 +18,7 @@ type Config struct {
 	URL       string
 	UserAgent string
 	Client    *http.Client
+	APIToken  string
 }
 
 type Client struct {
@@ -26,7 +29,10 @@ type Client struct {
 	token       string
 	webPassword string
 	client      *http.Client
+	tokenClient *pihole.Client
 }
+
+var ErrNotImplementedTokenClient = errors.New("resource is not implemented for the API token client")
 
 // doubleHash256 takes a string, double hashes it using the sha256 algorithm and returns the value
 func doubleHash256(data string) string {
@@ -37,7 +43,7 @@ func doubleHash256(data string) string {
 	return fmt.Sprintf("%x", hash2[:])
 }
 
-// New returns a new pihole client
+// New returns a new Pi-hole client
 func New(config Config) *Client {
 	client := &Client{
 		URL:         config.URL,
@@ -51,11 +57,27 @@ func New(config Config) *Client {
 		client.client = &http.Client{}
 	}
 
+	if config.APIToken != "" {
+		client.tokenClient = pihole.New(pihole.Config{
+			BaseURL:    config.URL,
+			APIToken:   config.APIToken,
+			HttpClient: client.client,
+		})
+	}
+
 	return client
 }
 
 // Init sets fields on the client which are a product of pihole network requests or other side effects
 func (c *Client) Init(ctx context.Context) error {
+	if c.URL == "" {
+		return fmt.Errorf("%w: Pi-hole URL is not set", ErrClientValidationFailed)
+	}
+
+	if c.tokenClient != nil {
+		return nil
+	}
+
 	if c.password == "" {
 		return fmt.Errorf("%w: password is not set", ErrClientValidationFailed)
 	}
