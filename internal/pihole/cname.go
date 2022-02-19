@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+
+	pihole "github.com/ryanwholey/go-pihole"
 )
 
 type CNAMERecordsListResponse struct {
@@ -25,15 +27,15 @@ func (rr CNAMERecordsListResponse) ToCNAMERecordList() CNAMERecordList {
 	return list
 }
 
-type CNAMERecordList []CNAMERecord
-
-type CNAMERecord struct {
-	Domain string
-	Target string
-}
+type CNAMERecord = pihole.CNAMERecord
+type CNAMERecordList = pihole.CNAMERecordList
 
 // ListCNAMERecords returns a list of the configured CNAME Pi-hole records
 func (c Client) ListCNAMERecords(ctx context.Context) (CNAMERecordList, error) {
+	if c.tokenClient != nil {
+		return c.tokenClient.CNAME.List(ctx)
+	}
+
 	req, err := c.RequestWithSession(ctx, "POST", "/admin/scripts/pi-hole/php/customcname.php", &url.Values{
 		"action": []string{"get"},
 	})
@@ -58,6 +60,10 @@ func (c Client) ListCNAMERecords(ctx context.Context) (CNAMERecordList, error) {
 
 // GetCNAMERecord returns a CNAMERecord for the passed domain if found
 func (c Client) GetCNAMERecord(ctx context.Context, domain string) (*CNAMERecord, error) {
+	if c.tokenClient != nil {
+		return c.tokenClient.CNAME.Read(ctx, domain)
+	}
+
 	list, err := c.ListCNAMERecords(ctx)
 	if err != nil {
 		return nil, err
@@ -79,6 +85,10 @@ type CreateCNAMERecordResponse struct {
 
 // CreateCNAMERecord handles CNAME record creation
 func (c Client) CreateCNAMERecord(ctx context.Context, record *CNAMERecord) (*CNAMERecord, error) {
+	if c.tokenClient != nil {
+		return c.tokenClient.CNAME.Create(ctx, record.Domain, record.Target)
+	}
+
 	req, err := c.RequestWithSession(ctx, "POST", "/admin/scripts/pi-hole/php/customcname.php", &url.Values{
 		"action": []string{"add"},
 		"domain": []string{record.Domain},
@@ -109,6 +119,10 @@ func (c Client) CreateCNAMERecord(ctx context.Context, record *CNAMERecord) (*CN
 
 // DeleteCNAMERecord handles CNAME record deletion for the passed domain
 func (c Client) DeleteCNAMERecord(ctx context.Context, domain string) error {
+	if c.tokenClient != nil {
+		return c.tokenClient.CNAME.Delete(ctx, domain)
+	}
+
 	record, err := c.GetCNAMERecord(ctx, domain)
 	if err != nil {
 		return err
@@ -135,6 +149,10 @@ func (c Client) DeleteCNAMERecord(ctx context.Context, domain string) error {
 
 // UpdateCNAMERecord handles updates for CNAME records
 func (c Client) UpdateCNAMERecord(ctx context.Context, record *CNAMERecord) (*CNAMERecord, error) {
+	if c.tokenClient != nil {
+		return c.tokenClient.CNAME.Update(ctx, record.Domain, record.Target)
+	}
+
 	current, err := c.GetCNAMERecord(ctx, record.Domain)
 	if err != nil {
 		return nil, err

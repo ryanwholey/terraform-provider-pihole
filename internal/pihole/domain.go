@@ -92,6 +92,10 @@ func (d DomainResponse) ToDomain() *Domain {
 
 // ListDomains returns a list of domains
 func (c Client) ListDomains(ctx context.Context, opts ListDomainsOptions) (DomainList, error) {
+	if c.tokenClient != nil {
+		return nil, fmt.Errorf("%w: list domains", ErrNotImplementedTokenClient)
+	}
+
 	values := &url.Values{
 		"action": []string{"get_domains"},
 	}

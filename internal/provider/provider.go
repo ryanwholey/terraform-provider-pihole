@@ -12,16 +12,24 @@ func Provider() *schema.Provider {
 	provider := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"password": {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("PIHOLE_PASSWORD", nil),
-				Description: "The admin password used to login to the admin dashboard",
+				Type:         schema.TypeString,
+				Optional:     true,
+				DefaultFunc:  schema.EnvDefaultFunc("PIHOLE_PASSWORD", nil),
+				Description:  "The admin password used to login to the admin dashboard. Conflicts with `api_token`.",
+				ExactlyOneOf: []string{"api_token", "password"},
 			},
 			"url": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("PIHOLE_URL", "http://pi.hole"),
 				Description: "URL where Pi-hole is deployed",
+			},
+			"api_token": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				DefaultFunc:  schema.EnvDefaultFunc("PIHOLE_API_TOKEN", nil),
+				Description:  "Experimental: Pi-hole API token. Conflicts with `password`.",
+				ExactlyOneOf: []string{"api_token", "password"},
 			},
 		},
 
@@ -52,6 +60,7 @@ func configure(version string, provider *schema.Provider) func(ctx context.Conte
 			Password:  d.Get("password").(string),
 			URL:       d.Get("url").(string),
 			UserAgent: provider.UserAgent("terraform-provider-pihole", version),
+			APIToken:  d.Get("api_token").(string),
 		}.Client(ctx)
 		if err != nil {
 			return nil, diag.FromErr(err)
