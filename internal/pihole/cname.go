@@ -156,30 +156,3 @@ func (c Client) DeleteCNAMERecord(ctx context.Context, domain string) error {
 
 	return nil
 }
-
-// UpdateCNAMERecord handles updates for CNAME records
-func (c Client) UpdateCNAMERecord(ctx context.Context, record *CNAMERecord) (*CNAMERecord, error) {
-	if c.tokenClient != nil {
-		return c.tokenClient.LocalCNAME.Update(ctx, record.Domain, record.Target)
-	}
-
-	current, err := c.GetCNAMERecord(ctx, record.Domain)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := c.DeleteCNAMERecord(ctx, record.Domain); err != nil {
-		return nil, err
-	}
-
-	updated, err := c.CreateCNAMERecord(ctx, record)
-	if err != nil {
-		_, recreateErr := c.CreateCNAMERecord(ctx, current)
-		if err != nil {
-			return nil, recreateErr
-		}
-		return nil, err
-	}
-
-	return updated, nil
-}

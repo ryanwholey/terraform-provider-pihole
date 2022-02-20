@@ -14,7 +14,6 @@ func resourceCNAMERecord() *schema.Resource {
 		Description:   "Manages a Pi-hole CNAME record",
 		CreateContext: resourceCNAMERecordCreate,
 		ReadContext:   resourceCNAMERecordRead,
-		UpdateContext: resourceCNAMERecordUpdate,
 		DeleteContext: resourceCNAMERecordDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -30,6 +29,7 @@ func resourceCNAMERecord() *schema.Resource {
 				Description: "Value of the CNAME record where traffic will be directed to from the configured domain value",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 		},
 	}
@@ -84,24 +84,6 @@ func resourceCNAMERecordRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	return diags
-}
-
-// resourceCNAMERecordUpdate handles CNAME record updates via Terraform
-func resourceCNAMERecordUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
-	client, ok := meta.(*pihole.Client)
-	if !ok {
-		return diag.Errorf("Could not load client in resource request")
-	}
-
-	_, err := client.UpdateCNAMERecord(ctx, &pihole.CNAMERecord{
-		Domain: d.Get("domain").(string),
-		Target: d.Get("target").(string),
-	})
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return resourceCNAMERecordRead(ctx, d, meta)
 }
 
 // resourceCNAMERecordDelete handles the deletion of a CNAME record via Terraform

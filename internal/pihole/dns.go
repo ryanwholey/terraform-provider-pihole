@@ -127,33 +127,6 @@ func (c Client) GetDNSRecord(ctx context.Context, domain string) (*DNSRecord, er
 	return nil, NewNotFoundError(fmt.Sprintf("record %q not found", domain))
 }
 
-// UpdateDNSRecord deletes a pihole local DNS record by domain name
-func (c Client) UpdateDNSRecord(ctx context.Context, record *DNSRecord) (*DNSRecord, error) {
-	if c.tokenClient != nil {
-		return c.tokenClient.LocalDNS.Update(ctx, record.Domain, record.IP)
-	}
-
-	current, err := c.GetDNSRecord(ctx, record.Domain)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := c.DeleteDNSRecord(ctx, record.Domain); err != nil {
-		return nil, err
-	}
-
-	updated, err := c.CreateDNSRecord(ctx, record)
-	if err != nil {
-		_, recreateErr := c.CreateDNSRecord(ctx, current)
-		if err != nil {
-			return nil, recreateErr
-		}
-		return nil, err
-	}
-
-	return updated, nil
-}
-
 // DeleteDNSRecord deletes a pihole local DNS record by domain name
 func (c Client) DeleteDNSRecord(ctx context.Context, domain string) error {
 	if c.tokenClient != nil {

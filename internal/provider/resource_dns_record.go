@@ -11,9 +11,9 @@ import (
 // resourceDNSRecord returns the local DNS Terraform resource management configuration
 func resourceDNSRecord() *schema.Resource {
 	return &schema.Resource{
+		Description:   "Manages a Pi-hole DNS record",
 		CreateContext: resourceDNSRecordCreate,
 		ReadContext:   resourceDNSRecordRead,
-		UpdateContext: resourceDNSRecordUpdate,
 		DeleteContext: resourceDNSRecordDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -26,9 +26,10 @@ func resourceDNSRecord() *schema.Resource {
 				ForceNew:    true,
 			},
 			"ip": {
-				Description: "IP address where traffic is routed to from the DNS record domain",
+				Description: "IP address to route traffic to from the DNS record domain",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 		},
 	}
@@ -83,24 +84,6 @@ func resourceDNSRecordRead(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	return diags
-}
-
-// resourceDNSRecordUpdate handles updates of a local DNS record via Terraform
-func resourceDNSRecordUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
-	client, ok := meta.(*pihole.Client)
-	if !ok {
-		return diag.Errorf("Could not load client in resource request")
-	}
-
-	_, err := client.UpdateDNSRecord(ctx, &pihole.DNSRecord{
-		Domain: d.Get("domain").(string),
-		IP:     d.Get("ip").(string),
-	})
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return resourceDNSRecordRead(ctx, d, meta)
 }
 
 // resourceDNSRecordDelete handles the deletion of a local DNS record via Terraform
