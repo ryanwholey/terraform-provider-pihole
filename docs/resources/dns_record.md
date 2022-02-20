@@ -3,12 +3,12 @@
 page_title: "pihole_dns_record Resource - terraform-provider-pihole"
 subcategory: ""
 description: |-
-  
+  Manages a Pi-hole DNS record
 ---
 
 # pihole_dns_record (Resource)
 
-
+Manages a Pi-hole DNS record
 
 ## Example Usage
 
@@ -25,7 +25,7 @@ resource "pihole_dns_record" "record" {
 ### Required
 
 - **domain** (String) DNS record domain
-- **ip** (String) IP address where traffic is routed to from the DNS record domain
+- **ip** (String) IP address to route traffic to from the DNS record domain
 
 ### Optional
 
