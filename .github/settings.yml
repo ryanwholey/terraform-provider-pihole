@@ -1,7 +1,8 @@
 repository:
   name: terraform-provider-pihole
   description: A Terraform provider for managing Pi-hole resources
-  topics: pi-hole, terraform, provider
+  topics: pi-hole, terraform, provider, terraform-provider
+  homepage: https://registry.terraform.io/providers/ryanwholey/pihole/latest/docs
 
   private: false
 
