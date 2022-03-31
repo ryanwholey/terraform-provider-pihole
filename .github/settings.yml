@@ -25,7 +25,6 @@ branches:
       required_status_checks:
         strict: true
         contexts:
-          - test
           - lint
           - pr-lint
       enforce_admins: false    
