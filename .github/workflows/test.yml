@@ -21,6 +21,13 @@ jobs:
     env:
       PIHOLE_URL: http://localhost:8080
       PIHOLE_PASSWORD: test
+    strategy:
+      matrix:
+        tag:
+          - "latest"
+          - "nightly"
+          - "2022.02.1"
+          - "2022.01.1"
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -35,8 +42,10 @@ jobs:
         with:
           terraform_wrapper: false
 
-      - name: Start pihole
-        run: docker-compose up -d
+      - name: Start Pi-hole
+        shell: bash
+        run: |-
+          docker-compose -f docker-compose.yml -f <(echo '{"services": {"pihole":{"image": "pihole/pihole:${{ matrix.tag }}"}}}') up -d --build
 
       - name: Run tests
         run: make testall
