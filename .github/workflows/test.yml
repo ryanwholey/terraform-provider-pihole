@@ -25,7 +25,6 @@ jobs:
       matrix:
         tag:
           - "latest"
-          - "nightly"
           - "2022.02.1"
           - "2022.01.1"
     steps:
