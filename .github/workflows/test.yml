@@ -24,7 +24,8 @@ jobs:
     strategy:
       matrix:
         tag:
-          - "latest"
+          - "2022.05"
+          - "2022.04.3"
           - "2022.02.1"
           - "2022.01.1"
     steps:
