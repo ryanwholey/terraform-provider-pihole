@@ -34,6 +34,10 @@ provider "pihole" {
 
 See the [provider documentation](https://registry.terraform.io/providers/ryanwholey/pihole/latest/docs) for more details.
 
+## Supported Versions
+
+Due to recent updates, this provider is not stable for any `pihole/pihole` image tags >= `2022.07.1` (currently tested against <= `2022.05`)
+
 ## Provider Development
 
 There are a few ways to configure local providers. See the somewhat obscure [Terraform plugin installation documentation](https://www.terraform.io/docs/cli/commands/init.html#plugin-installation) for a potential recommended way. 
