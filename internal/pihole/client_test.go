@@ -4,8 +4,10 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
+	"github.com/hashicorp/go-uuid"
 	"github.com/stretchr/testify/require"
 )
 
@@ -127,4 +129,24 @@ func TestClient(t *testing.T) {
 		require.Equal(t, client.sessionID, "ID")
 		require.Equal(t, client.token, "token")
 	})
+}
+
+func randomSuffix() string {
+	s, _ := uuid.GenerateUUID()
+
+	return s[:8]
+}
+
+func acceptance(t *testing.T) {
+	if os.Getenv("TF_ACC") != "1" {
+		t.Skip()
+	}
+}
+
+func newAccTestClient(t *testing.T, ctx context.Context, config Config) *Client {
+	c := New(config)
+
+	require.NoError(t, c.Init(ctx))
+
+	return c
 }

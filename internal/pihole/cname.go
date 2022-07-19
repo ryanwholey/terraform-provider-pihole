@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 
 	pihole "github.com/ryanwholey/go-pihole"
 )
@@ -80,7 +81,7 @@ func (c Client) GetCNAMERecord(ctx context.Context, domain string) (*CNAMERecord
 	}
 
 	for _, r := range list {
-		if r.Domain == domain {
+		if strings.EqualFold(r.Domain, domain) {
 			return &r, nil
 		}
 	}
