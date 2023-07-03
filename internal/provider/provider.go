@@ -31,6 +31,12 @@ func Provider() *schema.Provider {
 				Description:  "Experimental: Pi-hole API token. Conflicts with `password`.",
 				ExactlyOneOf: []string{"api_token", "password"},
 			},
+			"ca_file": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("PIHOLE_CA_FILE", nil),
+				Description: "CA file to connect to Pi-hole with TLS",
+			},
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
@@ -61,6 +67,7 @@ func configure(version string, provider *schema.Provider) func(ctx context.Conte
 			URL:       d.Get("url").(string),
 			UserAgent: provider.UserAgent("terraform-provider-pihole", version),
 			APIToken:  d.Get("api_token").(string),
+			CAFile:    d.Get("ca_file").(string),
 		}.Client(ctx)
 		if err != nil {
 			return nil, diag.FromErr(err)
