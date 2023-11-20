@@ -27,24 +27,22 @@ data "pihole_domains" "denied" {
 
 ### Optional
 
-- **id** (String) The ID of this resource.
-- **type** (String) Filter on allowed or denied domains. Must be either 'allow' or 'deny'.
+- `type` (String) Filter on allowed or denied domains. Must be either 'allow' or 'deny'.
 
 ### Read-Only
 
-- **domains** (Set of Object) Domains (see [below for nested schema](#nestedatt--domains))
+- `domains` (Set of Object) Domains (see [below for nested schema](#nestedatt--domains))
+- `id` (String) The ID of this resource.
 
 <a id="nestedatt--domains"></a>
 ### Nested Schema for `domains`
 
 Read-Only:
 
-- **comment** (String)
-- **domain** (String)
-- **enabled** (Boolean)
-- **group_ids** (List of Number)
-- **id** (Number)
-- **type** (String)
-- **wildcard** (Boolean)
-
-
+- `comment` (String)
+- `domain` (String)
+- `enabled` (Boolean)
+- `group_ids` (List of Number)
+- `id` (Number)
+- `type` (String)
+- `wildcard` (Boolean)

@@ -23,10 +23,8 @@ resource "pihole_ad_blocker_status" "status" {
 
 ### Required
 
-- **enabled** (Boolean) Whether to enable the Pi-hole ad blocker
+- `enabled` (Boolean) Whether to enable the Pi-hole ad blocker
 
-### Optional
+### Read-Only
 
-- **id** (String) The ID of this resource.
-
-
+- `id` (String) The ID of this resource.

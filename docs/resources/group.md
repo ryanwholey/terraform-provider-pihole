@@ -24,13 +24,16 @@ resource "pihole_group" "group" {
 
 ### Required
 
-- **name** (String) Group name
+- `name` (String) Group name
 
 ### Optional
 
-- **description** (String) Group description
-- **enabled** (Boolean) Whether to enable the group
-- **id** (String) The ID of this resource.
+- `description` (String) Group description
+- `enabled` (Boolean) Whether to enable the group
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
 
 ## Import
 

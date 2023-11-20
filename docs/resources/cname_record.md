@@ -24,12 +24,12 @@ resource "pihole_cname_record" "record" {
 
 ### Required
 
-- **domain** (String) Domain to create a CNAME record for
-- **target** (String) Value of the CNAME record where traffic will be directed to from the configured domain value
+- `domain` (String) Domain to create a CNAME record for
+- `target` (String) Value of the CNAME record where traffic will be directed to from the configured domain value
 
-### Optional
+### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 ## Import
 

@@ -44,6 +44,7 @@ provider "pihole" {
 
 ### Optional
 
-- **api_token** (String) Experimental: Pi-hole API token. Conflicts with `password`.
-- **password** (String) The admin password used to login to the admin dashboard. Conflicts with `api_token`.
-- **url** (String) URL where Pi-hole is deployed
+- `api_token` (String) Experimental: Pi-hole API token. Conflicts with `password`.
+- `ca_file` (String) CA file to connect to Pi-hole with TLS
+- `password` (String) The admin password used to login to the admin dashboard. Conflicts with `api_token`.
+- `url` (String) URL where Pi-hole is deployed
