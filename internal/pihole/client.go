@@ -135,7 +135,7 @@ func mergeURLValues(vs ...url.Values) url.Values {
 
 // RequestWithSession executes a request with appropriate session authentication
 func (c Client) RequestWithSession(ctx context.Context, method string, path string, data *url.Values) (*http.Request, error) {
-	if c.sessionID == "" {
+	if c.sessionToken == "" || c.sessionID == "" {
 		if err := c.Login(ctx); err != nil {
 			return nil, err
 		}
