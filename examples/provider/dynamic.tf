@@ -19,7 +19,7 @@ resource "docker_container" "pihole" {
   capabilities {
     add = ["NET_ADMIN"]
   }
-  
+
   ports {
     internal = 80
     external = 8080
@@ -37,7 +37,7 @@ resource "null_resource" "pihole_wait" {
   }
 
   provisioner "local-exec" {
-    command = "until curl -sS ${local.pihole_url}/admin/api.php ; do echo waiting for Pi-hole API && sleep 1 ; done"
+    command = "until curl -sS ${local.pihole_url}/admin/api.php 1>/dev/null ; do echo waiting for Pi-hole API && sleep 1 ; done"
   }
 }
 
