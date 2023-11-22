@@ -48,7 +48,7 @@ provider "pihole" {
 provider "pihole" {
   url = "https://pihole.domain.com"
 
-  # Under the hood, the API token is the admin password hashed twiced using SHA-256
+  # Pi-hole sets the API token to the admin password hashed twiced via SHA-256
   api_token = sha256(sha256(var.pihole_password))
 }
 ```
@@ -60,7 +60,7 @@ provider "pihole" {
 
 ### Dynamic Provider
 
-There may be cases where you are deploying Pi-hole in the same Terraform root module that you intend to use the Pi-hole provider. This can be achieved using a `null_resource` to wait for the server to become ready.
+In the case that Pi-hole is deployed in the same root module that the provider is to be used, a `null_resource` can be used to wait for the server to become ready.
 
 ```terraform
 provider "docker" {
@@ -84,6 +84,7 @@ resource "docker_container" "pihole" {
   capabilities {
     add = ["NET_ADMIN"]
   }
+  
   ports {
     internal = 80
     external = 8080

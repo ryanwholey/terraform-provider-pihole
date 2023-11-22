@@ -139,6 +139,6 @@ func TestClient(t *testing.T) {
 
 		require.NoError(t, client.Login(context.Background()))
 		require.Equal(t, client.sessionID, "ID")
-		require.Equal(t, client.token, "token")
+		require.Equal(t, client.sessionToken, "token")
 	})
 }

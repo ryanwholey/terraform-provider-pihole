@@ -21,14 +21,14 @@ type Config struct {
 }
 
 type Client struct {
-	URL         string
-	UserAgent   string
-	password    string
-	sessionID   string
-	token       string
-	webPassword string
-	client      *http.Client
-	tokenClient *pihole.Client
+	URL          string
+	UserAgent    string
+	password     string
+	sessionID    string
+	sessionToken string
+	webPassword  string
+	client       *http.Client
+	tokenClient  *pihole.Client
 }
 
 // doubleHash256 takes a string, double hashes it using the sha256 algorithm and returns the value
@@ -92,7 +92,7 @@ func (c *Client) Login(ctx context.Context) error {
 		return fmt.Errorf("%w: %s", ErrLoginFailed, err)
 	}
 
-	if c.token == "" {
+	if c.sessionToken == "" {
 		return fmt.Errorf("%w: token not set", ErrClientValidationFailed)
 	}
 
@@ -142,7 +142,7 @@ func (c Client) RequestWithSession(ctx context.Context, method string, path stri
 	}
 
 	d := mergeURLValues(url.Values{
-		"token": []string{c.token},
+		"token": []string{c.sessionToken},
 	}, *data)
 	req, err := http.NewRequestWithContext(ctx, method, fmt.Sprintf("%s%s", c.URL, path), strings.NewReader(d.Encode()))
 	if err != nil {
@@ -157,12 +157,6 @@ func (c Client) RequestWithSession(ctx context.Context, method string, path stri
 
 // RequestWithAuth adds an auth token to the passed request
 func (c Client) RequestWithAuth(ctx context.Context, method string, path string, data *url.Values) (*http.Request, error) {
-	if c.sessionID == "" {
-		if err := c.Login(ctx); err != nil {
-			return nil, err
-		}
-	}
-
 	u, err := url.Parse(fmt.Sprintf("%s%s", c.URL, path))
 	if err != nil {
 		return nil, err
@@ -220,7 +214,7 @@ func (c *Client) login(ctx context.Context) error {
 		return fmt.Errorf("invalid password")
 	}
 
-	c.token = token
+	c.sessionToken = token
 	return nil
 }
 
