@@ -19,6 +19,7 @@ resource "docker_container" "pihole" {
   capabilities {
     add = ["NET_ADMIN"]
   }
+  
   ports {
     internal = 80
     external = 8080

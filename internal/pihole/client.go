@@ -29,7 +29,6 @@ type Client struct {
 	webPassword string
 	client      *http.Client
 	tokenClient *pihole.Client
-	loggedIn    bool
 }
 
 // doubleHash256 takes a string, double hashes it using the sha256 algorithm and returns the value
@@ -101,8 +100,6 @@ func (c *Client) Login(ctx context.Context) error {
 		return fmt.Errorf("%w: sessionID not set", ErrClientValidationFailed)
 	}
 
-	c.loggedIn = true
-
 	return nil
 }
 
@@ -138,7 +135,7 @@ func mergeURLValues(vs ...url.Values) url.Values {
 
 // RequestWithSession executes a request with appropriate session authentication
 func (c Client) RequestWithSession(ctx context.Context, method string, path string, data *url.Values) (*http.Request, error) {
-	if !c.loggedIn {
+	if c.sessionID == "" {
 		if err := c.Login(ctx); err != nil {
 			return nil, err
 		}
@@ -160,7 +157,7 @@ func (c Client) RequestWithSession(ctx context.Context, method string, path stri
 
 // RequestWithAuth adds an auth token to the passed request
 func (c Client) RequestWithAuth(ctx context.Context, method string, path string, data *url.Values) (*http.Request, error) {
-	if !c.loggedIn {
+	if c.sessionID == "" {
 		if err := c.Login(ctx); err != nil {
 			return nil, err
 		}

@@ -25,6 +25,6 @@ Use the navigation to the left to read about the available resources.
 
 ### Dynamic Provider
 
-There may be cases where you are deploying Pi-hole in the same Terraform root module that you intend to use the Pi-hole provider. This can be achieved using a `null_resource` to wait for the server to become ready.
+In the case that Pi-hole is deployed in the same root module that the provider is to be used, a `null_resource` can be used to wait for the server to become ready.
 
 {{tffile "examples/provider/dynamic.tf"}}
