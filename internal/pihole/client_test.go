@@ -31,6 +31,9 @@ func TestClient(t *testing.T) {
 		})
 
 		err := client.Init(context.Background())
+		require.NoError(t, err)
+
+		err = client.Login(context.Background())
 		require.ErrorIs(t, err, ErrLoginFailed)
 		require.Contains(t, err.Error(), "request failed")
 	})
@@ -53,6 +56,9 @@ func TestClient(t *testing.T) {
 		})
 
 		err := client.Init(context.Background())
+		require.NoError(t, err)
+
+		err = client.Login(context.Background())
 		require.ErrorIs(t, err, ErrLoginFailed)
 		require.Contains(t, err.Error(), "session ID not found")
 	})
@@ -76,6 +82,9 @@ func TestClient(t *testing.T) {
 		})
 
 		err := client.Init(context.Background())
+		require.NoError(t, err)
+
+		err = client.Login(context.Background())
 		require.ErrorIs(t, err, ErrLoginFailed)
 		require.Contains(t, err.Error(), "malformed session cookie")
 	})
@@ -99,6 +108,9 @@ func TestClient(t *testing.T) {
 		})
 
 		err := client.Init(context.Background())
+		require.NoError(t, err)
+
+		err = client.Login(context.Background())
 		require.ErrorIs(t, err, ErrLoginFailed)
 		require.Contains(t, err.Error(), "invalid password")
 	})
@@ -124,7 +136,9 @@ func TestClient(t *testing.T) {
 		require.NoError(t, client.Init(context.Background()))
 		require.Equal(t, client.password, "test")
 		require.Equal(t, client.webPassword, doubleHash256("test"))
+
+		require.NoError(t, client.Login(context.Background()))
 		require.Equal(t, client.sessionID, "ID")
-		require.Equal(t, client.token, "token")
+		require.Equal(t, client.sessionToken, "token")
 	})
 }

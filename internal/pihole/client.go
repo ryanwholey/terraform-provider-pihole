@@ -3,7 +3,6 @@ package pihole
 import (
 	"context"
 	"crypto/sha256"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -22,17 +21,15 @@ type Config struct {
 }
 
 type Client struct {
-	URL         string
-	UserAgent   string
-	password    string
-	sessionID   string
-	token       string
-	webPassword string
-	client      *http.Client
-	tokenClient *pihole.Client
+	URL          string
+	UserAgent    string
+	password     string
+	sessionID    string
+	sessionToken string
+	webPassword  string
+	client       *http.Client
+	tokenClient  *pihole.Client
 }
-
-var ErrNotImplementedTokenClient = errors.New("resource is not implemented for the API token client")
 
 // doubleHash256 takes a string, double hashes it using the sha256 algorithm and returns the value
 func doubleHash256(data string) string {
@@ -86,11 +83,16 @@ func (c *Client) Init(ctx context.Context) error {
 		return fmt.Errorf("%w: webPassword is not set", ErrClientValidationFailed)
 	}
 
+	return nil
+}
+
+// Login creates a session and sets the proper attributes on the client for session based requests (not api token reqeuests)
+func (c *Client) Login(ctx context.Context) error {
 	if err := c.login(ctx); err != nil {
 		return fmt.Errorf("%w: %s", ErrLoginFailed, err)
 	}
 
-	if c.token == "" {
+	if c.sessionToken == "" {
 		return fmt.Errorf("%w: token not set", ErrClientValidationFailed)
 	}
 
@@ -131,10 +133,16 @@ func mergeURLValues(vs ...url.Values) url.Values {
 	return data
 }
 
-// RequestWithSession executes a request with appropriate session authentication (login() must have been called)
+// RequestWithSession executes a request with appropriate session authentication
 func (c Client) RequestWithSession(ctx context.Context, method string, path string, data *url.Values) (*http.Request, error) {
+	if c.sessionToken == "" || c.sessionID == "" {
+		if err := c.Login(ctx); err != nil {
+			return nil, err
+		}
+	}
+
 	d := mergeURLValues(url.Values{
-		"token": []string{c.token},
+		"token": []string{c.sessionToken},
 	}, *data)
 	req, err := http.NewRequestWithContext(ctx, method, fmt.Sprintf("%s%s", c.URL, path), strings.NewReader(d.Encode()))
 	if err != nil {
@@ -206,7 +214,7 @@ func (c *Client) login(ctx context.Context) error {
 		return fmt.Errorf("invalid password")
 	}
 
-	c.token = token
+	c.sessionToken = token
 	return nil
 }
 

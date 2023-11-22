@@ -10,7 +10,11 @@ The [Pi-hole](https://pi-hole.net) provider is used to manage Pi-hole resources.
 
 Use the navigation to the left to read about the available resources.
 
+{{ .SchemaMarkdown | trimspace }}
+
 ## Example Usage
+
+### Basic
 
 {{tffile "examples/provider/provider.tf"}}
 
@@ -19,4 +23,8 @@ Use the navigation to the left to read about the available resources.
 - `pihole_cname_record`
 - `pihole_dns_record`
 
-{{ .SchemaMarkdown | trimspace }}
+### Dynamic Provider
+
+In the case that Pi-hole is deployed in the same root module that the provider is to be used, a `null_resource` can be used to wait for the server to become ready.
+
+{{tffile "examples/provider/dynamic.tf"}}

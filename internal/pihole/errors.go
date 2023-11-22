@@ -26,4 +26,6 @@ var (
 	ErrLoginFailed = errors.New("login failed")
 	// ErrClientValidationFailed
 	ErrClientValidationFailed = errors.New("client validation failed")
+	// ErrNotImplementedTokenClient is returned when a particular Pi-hole resource cannot be managed due to missing client configuration
+	ErrNotImplementedTokenClient = errors.New("resource is not implemented for the API token client")
 )
