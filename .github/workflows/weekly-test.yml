@@ -1,0 +1,36 @@
+name: Weekly test job
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    #    env:
+    #      PIHOLE_URL: http://localhost:8080
+    #      PIHOLE_PASSWORD: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.16
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Start Pi-hole
+        shell: bash
+        run: |-
+          docker-compose -f docker-compose.yml -f <(echo '{"services": {"pihole":{"image": "pihole/pihole:latest"}}}') up -d --build
+
+      - name: Run tests
+        run: make testall
