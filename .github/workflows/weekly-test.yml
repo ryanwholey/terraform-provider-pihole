@@ -7,6 +7,10 @@ on:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        version: ["2022.07", "2022.08"]
+
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -30,7 +34,7 @@ jobs:
       - name: Start Pi-hole
         shell: bash
         run: |-
-          docker compose -f docker-compose.yml -f <(echo '{"services": {"pihole":{"image": "pihole/pihole:2022.07"}}}') up -d --build
+          docker compose -f docker-compose.yml -f <(echo '{"services": {"pihole":{"image": "pihole/pihole:${{ matrix.version }}"}}}') up -d --build
 
       - name: Run tests
         run: make testall
