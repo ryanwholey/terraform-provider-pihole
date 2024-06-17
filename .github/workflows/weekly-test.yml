@@ -1,9 +1,8 @@
 name: Weekly test job
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: '0 12 * * 1' # 12:00 every Monday.
 
 jobs:
   test:
