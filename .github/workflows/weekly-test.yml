@@ -12,8 +12,8 @@ jobs:
         version: [
           "2022.07", # Current test version used.
           "2022.12.1", # Latest version of 2022.
-          "2023.11.0" # Latest version of 2023.
-          "2024.06.0" # Latest known version of 2024.
+          "2023.11.0", # Latest version of 2023.
+          "2024.06.0", # Latest known version of 2024.
         ]
 
     runs-on: ubuntu-latest
