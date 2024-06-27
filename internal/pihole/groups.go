@@ -247,7 +247,7 @@ func (c Client) DeleteGroup(ctx context.Context, name string) error {
 
 	req, err := c.RequestWithSession(ctx, "POST", "/admin/scripts/pi-hole/php/groups.php", &url.Values{
 		"action": []string{"delete_group"},
-		"id":     []string{strconv.FormatInt(toDelete.ID, 10)},
+		"id":     []string{fmt.Sprintf("[%s]", strconv.FormatInt(toDelete.ID, 10))},
 	})
 	if err != nil {
 		return err
