@@ -20,7 +20,7 @@ jobs:
   test:
     strategy:
       matrix:
-        version: [
+        tag: [
           "2022.07", # Current test version used.
           "2022.12.1", # Latest version of 2022.
           "2023.11.0", # Latest version of 2023.
