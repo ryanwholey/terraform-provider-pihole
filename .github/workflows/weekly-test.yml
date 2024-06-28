@@ -19,6 +19,7 @@ jobs:
 
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
     env:
       PIHOLE_URL: http://localhost:8080
       PIHOLE_PASSWORD: test
@@ -40,7 +41,7 @@ jobs:
       - name: Start Pi-hole
         shell: bash
         run: |-
-          docker compose -f docker-compose.yml -f <(echo '{"services": {"pihole":{"image": "pihole/pihole:${{ matrix.version }}"}}}') up -d --build
+          TAG=${{ matrix.tag }} make docker-run
 
       - name: Run tests
         run: make testall
