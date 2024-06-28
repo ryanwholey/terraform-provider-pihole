@@ -1,0 +1,47 @@
+name: Weekly test job
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 12 * * 1' # 12:00 every Monday.
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        version: [
+          "2022.07", # Current test version used.
+          "2022.12.1", # Latest version of 2022.
+          "2023.11.0", # Latest version of 2023.
+          "2024.06.0", # Latest known version of 2024.
+          "latest",
+          "nightly"
+        ]
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      PIHOLE_URL: http://localhost:8080
+      PIHOLE_PASSWORD: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.22
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Start Pi-hole
+        shell: bash
+        run: |-
+          TAG=${{ matrix.tag }} make docker-run
+
+      - name: Run tests
+        run: make testall
