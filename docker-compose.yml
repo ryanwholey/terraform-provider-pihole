@@ -1,8 +1,7 @@
-version: "3"
 services:
   pihole:
     container_name: pihole
-    image: pihole/pihole:2022.05
+    image: "pihole/pihole:${TAG}"
     ports:
       - "8080:80/tcp"
     environment:
