@@ -35,7 +35,6 @@ jobs:
     timeout-minutes: 15
 
     env:
-      # TAG: ${{ matrix.tag }}
       PIHOLE_URL: http://localhost:8080
       PIHOLE_PASSWORD: test
 
@@ -55,6 +54,8 @@ jobs:
 
       - name: Start Pi-hole
         shell: bash
+        env:
+          TAG: ${{ matrix.tag }}
         run: make docker-run
 
       - name: Run tests
