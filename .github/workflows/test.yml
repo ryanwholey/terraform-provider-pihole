@@ -5,34 +5,37 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'examples/**'
-      - 'templates/**'
+      - "**.md"
+      - "docs/**"
+      - "examples/**"
+      - "templates/**"
   pull_request:
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'examples/**'
-      - 'templates/**'
+      - "**.md"
+      - "docs/**"
+      - "examples/**"
+      - "templates/**"
+  schedule:
+    - cron: "0 12 * * 1" # 12:00 every Monday.
 
 jobs:
   test:
     strategy:
       matrix:
         tag: [
-          "2022.07", # Current test version used.
-          "2022.12.1", # Latest version of 2022.
-          "2023.11.0", # Latest version of 2023.
-          "2024.06.0", # Latest known version of 2024.
-          "latest",
-          "nightly"
-        ]
+            "2022.07", # Current test version used.
+            "2022.12.1", # Latest version of 2022.
+            "2023.11.0", # Latest version of 2023.
+            "2024.06.0", # Latest known version of 2024.
+            "latest",
+            "nightly",
+          ]
 
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
     env:
+      TAG: ${{ matrix.tag }}
       PIHOLE_URL: http://localhost:8080
       PIHOLE_PASSWORD: test
 
@@ -52,8 +55,7 @@ jobs:
 
       - name: Start Pi-hole
         shell: bash
-        run: |-
-          TAG=${{ matrix.tag }} make docker-run
+        run: make docker-run
 
       - name: Run tests
         run: make testall
