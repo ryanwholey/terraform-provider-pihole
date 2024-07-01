@@ -34,10 +34,6 @@ provider "pihole" {
 
 See the [provider documentation](https://registry.terraform.io/providers/ryanwholey/pihole/latest/docs) for more details.
 
-## Supported Versions
-
-Due to recent updates, this provider is not stable for any `pihole/pihole` image tags >= `2022.07.1` (currently tested against <= `2022.05`)
-
 ## Provider Development
 
 There are a few ways to configure local providers. See the somewhat obscure [Terraform plugin installation documentation](https://www.terraform.io/docs/cli/commands/init.html#plugin-installation) for a potential recommended way. 
@@ -72,20 +68,21 @@ terraform {
 
 ### Testing
 
-Unit tests can be ran with a simple command
-
+#### Unit testing
 ```sh
 make test
 ```
 
-Acceptance can run against any Pi-hole deployment given that `PIHOLE_URL` and `PIHOLE_PASSWORD` are set in the shell. A dockerized Pi-hole can be ran via the docker-compose file provided in the project root.
+#### Acceptance testing
+
+A prerequisite for running acceptance tests is to specify image tag, pihole url, and password.
 
 ```sh
-# from the project root
-docker-compose up -d --build
-
+export TAG=latest
 export PIHOLE_URL=http://localhost:8080
 export PIHOLE_PASSWORD=test
+
+make docker-run
 
 make testall
 ```
