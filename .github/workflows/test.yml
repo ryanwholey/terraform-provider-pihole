@@ -35,7 +35,7 @@ jobs:
     timeout-minutes: 15
 
     env:
-      TAG: ${{ matrix.tag }}
+      # TAG: ${{ matrix.tag }}
       PIHOLE_URL: http://localhost:8080
       PIHOLE_PASSWORD: test
 
