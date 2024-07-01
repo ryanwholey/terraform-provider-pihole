@@ -36,17 +36,18 @@ See the [provider documentation](https://registry.terraform.io/providers/ryanwho
 
 ## Provider Development
 
-There are a few ways to configure local providers. See the somewhat obscure [Terraform plugin installation documentation](https://www.terraform.io/docs/cli/commands/init.html#plugin-installation) for a potential recommended way. 
+There are a few ways to configure local providers. See the somewhat obscure [Terraform plugin installation documentation](https://www.terraform.io/docs/cli/commands/init.html#plugin-installation) for a potential recommended way.
 
 One way to run a local provider is to build the project, move it to the Terraform plugins directory and then use a `required_providers` block to note the address and version.
+
+> [!NOTE]
+> Note the `/darwin_amd64/` path portion targets a Mac with an AMD64 processor,
+> see https://github.com/ryanwholey/terraform-provider-pihole/blob/main/.goreleaser.yml#L18-L27
+> for possible supported combinations.
 
 ```sh
 # from the project root
 go build .
-
-# Note the `/darwin_amd64/` path portion targets a Mac with an AMD64 processor, 
-# see https://github.com/ryanwholey/terraform-provider-pihole/blob/main/.goreleaser.yml#L18-L27
-# for possible supported combinations
 
 mkdir -p ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_amd64/
 
@@ -68,6 +69,11 @@ terraform {
 
 ### Testing
 
+Testing a Terraform provider comes in several forms. This chapter will attempt to explain the differences, where to find documentation, and how to contribute.
+
+> [!NOTE]
+> For the current tests in this repository the SDKv2 is used. In issue [#4](https://github.com/ryanwholey/terraform-provider-pihole/issues/38) an upgrade from SDKv2 to [plugin-testing](https://developer.hashicorp.com/terraform/plugin/framework) can be tracked.
+
 #### Unit testing
 ```sh
 make test
@@ -75,7 +81,11 @@ make test
 
 #### Acceptance testing
 
-A prerequisite for running acceptance tests is to specify image tag, pihole url, and password.
+The `make testall` command is prefixed with the `TF_ACC=1`. This tells go to include the tests that utilise the `helper/resource.Test()` functions.
+
+For further reading, please see Hashicorp's [documenation](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests) on acceptance tests.
+
+To setup a proper environment combining an instance of Pihole in a docker container with tests, some environment variables need to be set for the tests to make their requests to the correct location.
 
 ```sh
 export TAG=latest
@@ -87,9 +97,15 @@ make docker-run
 make testall
 ```
 
+#### TFTest
+
+To assert that resources are created by the planned result of Terraform, the [Terraform tests chapter](https://developer.hashicorp.com/terraform/language/tests) is a good introduction on the topic.
+
+No such tests are yet implemented.
+
 ### Docs
 
-Documentation is auto-generated via [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) from description fields within the provider package, as well as examples and templates from the `examples/` and `templates/` folders respectively. 
+Documentation is auto-generated via [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) from description fields within the provider package, as well as examples and templates from the `examples/` and `templates/` folders respectively.
 
 To generate the docs, ensure that `tfplugindocs` is installed, then run
 
