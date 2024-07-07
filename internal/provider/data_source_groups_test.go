@@ -15,11 +15,11 @@ func TestAccGroupsData(t *testing.T) {
 					resource "pihole_group" "enabled_test_group" {
 					  name        = "enabled_test_group"
 					  description = "Sample description"
-					  enabled 	  = true
+					  enabled     = true
 					}
 
 					data "pihole_groups" "groups" {
-						depends_on = [ pihole_group.enabled_test_group ]
+					  depends_on = [pihole_group.enabled_test_group]
 					}
 				`,
 				Check: resource.ComposeTestCheckFunc(
