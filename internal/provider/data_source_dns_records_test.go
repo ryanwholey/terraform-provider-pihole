@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAccDomainsData(t *testing.T) {
+func TestAccDNSRecordsData(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
