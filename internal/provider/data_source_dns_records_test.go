@@ -16,7 +16,7 @@ func TestAccDNSRecordsData(t *testing.T) {
 					  domain = "foo.com"
 					  ip     = "127.0.0.1"
 					}
-s
+
 					data "pihole_dns_records" "records" {
 					  depends_on = [pihole_dns_record.record]
 					}
