@@ -57,7 +57,7 @@ func testLocalCNAMEResourceConfig(name string, domain string, target string) str
 }
 
 func testLocalCNAMEResourceWithDataConfig() string {
-	return fmt.Sprint(`
+	return `
 		locals {
 		  all_cnames = [
 			"aa.com",
@@ -92,7 +92,7 @@ func testLocalCNAMEResourceWithDataConfig() string {
 		data "pihole_cname_records" "records" {
 		  depends_on = [pihole_cname_record.cname_records]
 		}
-    `)
+    `
 }
 
 // testCheckLocalCNAMEResourceExists checks that the CNAME record exists in Pi-hole
