@@ -34,23 +34,20 @@ provider "pihole" {
 
 See the [provider documentation](https://registry.terraform.io/providers/ryanwholey/pihole/latest/docs) for more details.
 
-## Supported Versions
-
-Due to recent updates, this provider is not stable for any `pihole/pihole` image tags >= `2022.07.1` (currently tested against <= `2022.05`)
-
 ## Provider Development
 
-There are a few ways to configure local providers. See the somewhat obscure [Terraform plugin installation documentation](https://www.terraform.io/docs/cli/commands/init.html#plugin-installation) for a potential recommended way. 
+There are a few ways to configure local providers. See the somewhat obscure [Terraform plugin installation documentation](https://www.terraform.io/docs/cli/commands/init.html#plugin-installation) for a potential recommended way.
 
 One way to run a local provider is to build the project, move it to the Terraform plugins directory and then use a `required_providers` block to note the address and version.
+
+> [!NOTE]
+> Note the `/darwin_amd64/` path portion targets a Mac with an AMD64 processor,
+> see https://github.com/ryanwholey/terraform-provider-pihole/blob/main/.goreleaser.yml#L18-L27
+> for possible supported combinations.
 
 ```sh
 # from the project root
 go build .
-
-# Note the `/darwin_amd64/` path portion targets a Mac with an AMD64 processor, 
-# see https://github.com/ryanwholey/terraform-provider-pihole/blob/main/.goreleaser.yml#L18-L27
-# for possible supported combinations
 
 mkdir -p ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_amd64/
 
@@ -72,27 +69,49 @@ terraform {
 
 ### Testing
 
-Unit tests can be ran with a simple command
+Testing a Terraform provider comes in several forms. This chapter will attempt to explain the differences, where to find documentation, and how to contribute.
 
+> [!NOTE]
+> For the current tests in this repository the SDKv2 is used. In issue [#4](https://github.com/ryanwholey/terraform-provider-pihole/issues/38) an upgrade from SDKv2 to [plugin-testing](https://developer.hashicorp.com/terraform/plugin/framework) can be tracked.
+
+#### Unit testing
 ```sh
 make test
 ```
 
-Acceptance can run against any Pi-hole deployment given that `PIHOLE_URL` and `PIHOLE_PASSWORD` are set in the shell. A dockerized Pi-hole can be ran via the docker-compose file provided in the project root.
+#### Acceptance testing
+
+Run the following commands to test against a local Pi-hole server via [docker](https://docs.docker.com/engine/install/)
 
 ```sh
-# from the project root
-docker-compose up -d --build
-
+# Set the local Terraform provider environment variables
 export PIHOLE_URL=http://localhost:8080
 export PIHOLE_PASSWORD=test
 
+# Start the pi-hole server
+make docker-run
+
+# Run Terraform tests against the server
 make testall
 ```
 
+To test against a specific Pi-hole image tag, specify the tag via the `TAG` env var
+
+```sh
+TAG=nightly make docker-run
+```
+
+For further reading about Terraform acceptance tests, see Hashicorp's [documenation](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests) on acceptance tests.
+
+#### TFTest
+
+To assert that resources are created by the planned result of Terraform, the [Terraform tests chapter](https://developer.hashicorp.com/terraform/language/tests) is a good introduction on the topic.
+
+No such tests are yet implemented.
+
 ### Docs
 
-Documentation is auto-generated via [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) from description fields within the provider package, as well as examples and templates from the `examples/` and `templates/` folders respectively. 
+Documentation is auto-generated via [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) from description fields within the provider package, as well as examples and templates from the `examples/` and `templates/` folders respectively.
 
 To generate the docs, ensure that `tfplugindocs` is installed, then run
 

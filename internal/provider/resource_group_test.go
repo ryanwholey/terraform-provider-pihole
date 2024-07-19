@@ -44,7 +44,7 @@ func testGroupResourceConfig(resourceName, name, description string, enabled boo
 			name        = %q
 			description = %q
 			enabled     = %v
-		}	
+		}
 	`, resourceName, name, description, enabled)
 }
 
@@ -82,11 +82,14 @@ func testAccCheckGroupDestroy(s *terraform.State) error {
 			return fmt.Errorf("group name not found on primary resource")
 		}
 
-		if _, err := client.GetGroup(context.Background(), name); err != nil {
-			if _, ok := err.(*pihole.NotFoundError); !ok {
-				return err
-			}
+		_, err := client.GetGroup(context.Background(), name)
+		_, sameErr := err.(*pihole.NotFoundError)
+
+		if sameErr != true {
+			return err
 		}
+
+		continue
 	}
 
 	return nil
