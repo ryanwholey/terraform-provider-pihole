@@ -81,21 +81,27 @@ make test
 
 #### Acceptance testing
 
-The `make testall` command is prefixed with the `TF_ACC=1`. This tells go to include the tests that utilise the `helper/resource.Test()` functions.
-
-For further reading, please see Hashicorp's [documenation](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests) on acceptance tests.
-
-To setup a proper environment combining an instance of Pihole in a docker container with tests, some environment variables need to be set for the tests to make their requests to the correct location.
+Run the following commands to test against a local Pi-hole server via [docker](https://docs.docker.com/engine/install/)
 
 ```sh
-export TAG=latest
+# Set the local Terraform provider environment variables
 export PIHOLE_URL=http://localhost:8080
 export PIHOLE_PASSWORD=test
 
+# Start the pi-hole server
 make docker-run
 
+# Run Terraform tests against the server
 make testall
 ```
+
+To test against a specific Pi-hole image tag, specify the tag via the `TAG` env var
+
+```sh
+TAG=nightly make docker-run
+```
+
+For further reading about Terraform acceptance tests, see Hashicorp's [documenation](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests) on acceptance tests.
 
 #### TFTest
 
