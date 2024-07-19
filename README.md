@@ -81,7 +81,7 @@ make test
 
 #### Acceptance testing
 
-Run the following commands to test against a live local Pi-hole server via [docker](https://docs.docker.com/engine/install/)
+Run the following commands to test against a local Pi-hole server via [docker](https://docs.docker.com/engine/install/)
 
 ```sh
 # Set the local Terraform provider environment variables
