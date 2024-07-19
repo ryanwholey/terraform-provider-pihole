@@ -81,6 +81,8 @@ make test
 
 #### Acceptance testing
 
+Run the following commands to test against a live local Pi-hole server via [docker](https://docs.docker.com/engine/install/)
+
 ```sh
 # Set the local Terraform provider environment variables
 export PIHOLE_URL=http://localhost:8080
@@ -99,7 +101,7 @@ To test against a specific Pi-hole image tag, specify the tag via the `TAG` env 
 TAG=nightly make docker-run
 ```
 
-For further reading, please see Hashicorp's [documenation](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests) on acceptance tests.
+For further reading about Terraform acceptance tests, see Hashicorp's [documenation](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests) on acceptance tests.
 
 #### TFTest
 
