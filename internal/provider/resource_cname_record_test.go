@@ -33,6 +33,15 @@ func TestAccCNAMERecord(t *testing.T) {
 					testCheckLocalCNAMEResourceExists(t, "foo.com", "woz.com"),
 				),
 			},
+			{
+				Config: testLocalCNAMEResourceWithDataConfig(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("data.pihole_cname_records.records", "records.#", "20"),
+
+					resource.TestCheckResourceAttr("data.pihole_cname_records.records", "records.0.domain", "aa.com"),
+					resource.TestCheckResourceAttr("data.pihole_cname_records.records", "records.0.target", "ingress.example.local"),
+				),
+			},
 		},
 	})
 }
@@ -45,6 +54,45 @@ func testLocalCNAMEResourceConfig(name string, domain string, target string) str
 			target = %q
 		}	
 	`, name, domain, target)
+}
+
+func testLocalCNAMEResourceWithDataConfig() string {
+	return `
+		locals {
+		  all_cnames = [
+			"aa.com",
+			"bb.com",
+			"cc.com",
+			"dd.com",
+			"ee.com",
+			"ff.com",
+			"gg.com",
+			"hh.com",
+			"ii.com",
+			"jj.com",
+			"kk.com",
+			"ll.com",
+			"mm.com",
+			"nn.com",
+			"oo.com",
+			"pp.com",
+			"qq.com",
+			"rr.com",
+			"ss.com",
+			"tt.com",
+		  ]
+		}
+
+		resource "pihole_cname_record" "cname_records" {
+		  count  = length(local.all_cnames)
+		  domain = local.all_cnames[count.index]
+		  target = "ingress.example.local"
+		}
+
+		data "pihole_cname_records" "records" {
+		  depends_on = [pihole_cname_record.cname_records]
+		}
+    `
 }
 
 // testCheckLocalCNAMEResourceExists checks that the CNAME record exists in Pi-hole
