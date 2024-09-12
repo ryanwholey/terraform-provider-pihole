@@ -2,11 +2,14 @@ package provider
 
 import (
 	"context"
+	"sync"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
 )
+
+var resourceDeleteMutex sync.Mutex
 
 // resourceCNAMERecord returns the CNAME Terraform resource management configuration
 func resourceCNAMERecord() *schema.Resource {
@@ -92,6 +95,9 @@ func resourceCNAMERecordDelete(ctx context.Context, d *schema.ResourceData, meta
 	if !ok {
 		return diag.Errorf("Could not load client in resource request")
 	}
+
+	resourceDeleteMutex.Lock()
+	defer resourceDeleteMutex.Unlock()
 
 	if err := client.DeleteCNAMERecord(ctx, d.Id()); err != nil {
 		return diag.FromErr(err)
