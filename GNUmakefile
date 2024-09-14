@@ -15,4 +15,4 @@ lint:
 	golangci-lint run ./...
 
 docs:
-	tfplugindocs
+	go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@v0.19.4
