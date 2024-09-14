@@ -3,7 +3,7 @@ name: Test selected versions on a schedule
 on:
   push:
     branches:
-      - nightly
+      - test-scheduled
     paths-ignore:
       - "**.md"
       - "docs/**"
