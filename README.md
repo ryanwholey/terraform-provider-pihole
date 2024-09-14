@@ -41,7 +41,7 @@ There are a few ways to configure local providers. See the somewhat obscure [Ter
 One way to run a local provider is to build the project, move it to the Terraform plugins directory and then use a `required_providers` block to note the address and version.
 
 > [!NOTE]
-> Note the `/darwin_amd64/` path portion targets a Mac with an AMD64 processor,
+> Note the `/darwin_arm64/` path portion targets a Mac with an ARM64 processor,
 > see https://github.com/ryanwholey/terraform-provider-pihole/blob/main/.goreleaser.yml#L18-L27
 > for possible supported combinations.
 
@@ -49,9 +49,9 @@ One way to run a local provider is to build the project, move it to the Terrafor
 # from the project root
 go build .
 
-mkdir -p ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_amd64/
+mkdir -p ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_arm64/
 
-cp terraform-provider-pihole ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_amd64/terraform-provider-pihole_v0.0.1
+cp terraform-provider-pihole ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_arm64/terraform-provider-pihole_v0.0.1
 ```
 
 In the Terraform workspace, use a `required_providers` block to target the locally built provider
