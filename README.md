@@ -118,7 +118,7 @@ No such tests are yet implemented.
 
 Documentation is auto-generated via [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) from description fields within the provider package, as well as examples and templates from the `examples/` and `templates/` folders respectively.
 
-To generate the docs, ensure that `tfplugindocs` is installed, then run
+To generate the docs run
 
 ```sh
 make docs
