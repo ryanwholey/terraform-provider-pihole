@@ -1,4 +1,4 @@
-name: Test selected versions
+name: Test selected versions on a schedule
 
 on:
   push:
