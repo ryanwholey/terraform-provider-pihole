@@ -12,7 +12,7 @@ import (
 	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
 )
 
-// resorceGroup returns the Terraform resource management configuration for a Pi-hole group
+// resourceGroup returns the Terraform resource management configuration for a Pi-hole group
 func resourceGroup() *schema.Resource {
 	return &schema.Resource{
 		Description:   "A construct to associate clients with allow/deny lists and/or adlists",
