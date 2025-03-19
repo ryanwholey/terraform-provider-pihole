@@ -2,10 +2,11 @@ package provider
 
 import (
 	"context"
+	"errors"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
+	pihole "github.com/ryanwholey/go-pihole"
 )
 
 // resourceDNSRecord returns the local DNS Terraform resource management configuration
@@ -45,10 +46,7 @@ func resourceDNSRecordCreate(ctx context.Context, d *schema.ResourceData, meta i
 	domain := d.Get("domain").(string)
 	ip := d.Get("ip").(string)
 
-	_, err := client.CreateDNSRecord(ctx, &pihole.DNSRecord{
-		Domain: domain,
-		IP:     ip,
-	})
+	_, err := client.LocalDNS.Create(ctx, domain, ip)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -65,9 +63,9 @@ func resourceDNSRecordRead(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.Errorf("Could not load client in resource request")
 	}
 
-	record, err := client.GetDNSRecord(ctx, d.Id())
+	record, err := client.LocalDNS.Get(ctx, d.Id())
 	if err != nil {
-		if _, ok := err.(*pihole.NotFoundError); ok {
+		if errors.Is(err, pihole.ErrorLocalDNSNotFound) {
 			d.SetId("")
 			return nil
 		}
@@ -93,7 +91,7 @@ func resourceDNSRecordDelete(ctx context.Context, d *schema.ResourceData, meta i
 		return diag.Errorf("Could not load client in resource request")
 	}
 
-	if err := client.DeleteDNSRecord(ctx, d.Id()); err != nil {
+	if err := client.LocalDNS.Delete(ctx, d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 

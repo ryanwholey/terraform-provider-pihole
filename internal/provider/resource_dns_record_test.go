@@ -2,12 +2,13 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
+	pihole "github.com/ryanwholey/go-pihole"
 )
 
 func TestAccLocalDNS(t *testing.T) {
@@ -49,7 +50,7 @@ func testCheckLocalDNSResourceExists(t *testing.T, domain string, ip string) res
 	return func(*terraform.State) error {
 		client := testAccProvider.Meta().(*pihole.Client)
 
-		record, err := client.GetDNSRecord(context.Background(), domain)
+		record, err := client.LocalDNS.Get(context.Background(), domain)
 		if err != nil {
 			return err
 		}
@@ -70,8 +71,8 @@ func testAccCheckLocalDNSDestroy(s *terraform.State) error {
 			continue
 		}
 
-		if _, err := client.GetDNSRecord(context.Background(), r.Primary.ID); err != nil {
-			if _, ok := err.(*pihole.NotFoundError); !ok {
+		if _, err := client.LocalDNS.Get(context.Background(), r.Primary.ID); err != nil {
+			if errors.Is(err, pihole.ErrorLocalDNSNotFound) {
 				return err
 			}
 		}

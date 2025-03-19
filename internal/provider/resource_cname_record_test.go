@@ -2,12 +2,13 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
+	pihole "github.com/ryanwholey/go-pihole"
 )
 
 // TestAccCNAMERecord acceptance test for the CNAME record resource
@@ -100,7 +101,7 @@ func testCheckLocalCNAMEResourceExists(t *testing.T, domain string, target strin
 	return func(*terraform.State) error {
 		client := testAccProvider.Meta().(*pihole.Client)
 
-		record, err := client.GetCNAMERecord(context.Background(), domain)
+		record, err := client.LocalCNAME.Get(context.Background(), domain)
 		if err != nil {
 			return err
 		}
@@ -122,8 +123,8 @@ func testAccCheckCNAMERecordDestroy(s *terraform.State) error {
 			continue
 		}
 
-		if _, err := client.GetCNAMERecord(context.Background(), r.Primary.ID); err != nil {
-			if _, ok := err.(*pihole.NotFoundError); !ok {
+		if _, err := client.LocalCNAME.Get(context.Background(), r.Primary.ID); err != nil {
+			if errors.Is(err, pihole.ErrorLocalCNAMENotFound) {
 				return err
 			}
 		}
