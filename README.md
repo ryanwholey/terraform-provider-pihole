@@ -27,8 +27,6 @@ Configure the provider with credentials, or pass environment variables.
 provider "pihole" {
   url       = "https://pihole.domain.com" # PIHOLE_URL
   password  = var.pihole_password         # PIHOLE_PASSWORD
-
-  # api_token = var.pihole_api_token      # PIHOLE_API_TOKEN (experimental, requires Web Interface >= 5.11)
 }
 ```
 

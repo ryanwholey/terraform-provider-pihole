@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
+	pihole "github.com/ryanwholey/go-pihole"
 )
 
 // dataSourceDNSRecords returns a schema resource for listing Pi-hole local DNS records
@@ -45,7 +45,7 @@ func dataSourceDNSRecordsRead(ctx context.Context, d *schema.ResourceData, meta 
 		return diag.Errorf("Could not load client in resource request")
 	}
 
-	dnsList, err := client.ListDNSRecords(ctx)
+	dnsList, err := client.LocalDNS.List(ctx)
 	if err != nil {
 		return diag.FromErr(err)
 	}

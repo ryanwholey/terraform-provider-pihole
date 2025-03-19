@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"context"
 	"os"
 	"testing"
 
@@ -8,12 +9,34 @@ import (
 )
 
 func testAccPreCheck(t *testing.T) {
-	if v := os.Getenv("PIHOLE_URL"); v == "" {
+	url := os.Getenv("PIHOLE_URL")
+	if url == "" {
 		t.Fatal("PIHOLE_URL must be set for acceptance tests")
 	}
 
-	if v := os.Getenv("PIHOLE_PASSWORD"); v == "" {
+	password := os.Getenv("PIHOLE_PASSWORD")
+	if password == "" {
 		t.Fatal("PIHOLE_PASSWORD must be set for acceptance tests")
+	}
+
+	if v := os.Getenv("__PIHOLE_SESSION_ID"); v == "" {
+		t.Log("No session ID found, setting for testing")
+
+		client, err := Config{
+			URL:      url,
+			Password: password,
+		}.Client(context.TODO())
+
+		if err != nil {
+			t.Fatal(err.Error())
+		}
+		session, err := client.SessionAPI.Post(context.TODO())
+		if err != nil {
+			t.Fatal(err.Error())
+		}
+		if err := os.Setenv("__PIHOLE_SESSION_ID", session.SID); err != nil {
+			t.Fatal(err.Error())
+		}
 	}
 }
 

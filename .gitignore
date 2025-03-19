@@ -1,6 +1,8 @@
 # local
+local-test/
 terraform/
 .env
+terraform-provider-pihole
 
 *.dll
 *.exe
