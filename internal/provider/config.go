@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/hashicorp/go-retryablehttp"
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
 	pihole "github.com/ryanwholey/go-pihole"
 )
 
