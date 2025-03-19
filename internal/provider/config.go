@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/hashicorp/go-retryablehttp"
 	pihole "github.com/ryanwholey/go-pihole"
 )
 
@@ -27,7 +28,7 @@ type Config struct {
 }
 
 func (c Config) Client(ctx context.Context) (*pihole.Client, error) {
-	httpClient := &http.Client{}
+	httpClient := retryablehttp.NewClient().StandardClient()
 
 	if c.CAFile != "" {
 		ca, err := os.ReadFile(c.CAFile)

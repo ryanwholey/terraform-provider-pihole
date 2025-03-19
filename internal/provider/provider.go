@@ -36,15 +36,11 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"pihole_cname_records": dataSourceCNAMERecords(),
 			"pihole_dns_records":   dataSourceDNSRecords(),
-			// "pihole_domains":       dataSourceDomains(),
-			// "pihole_groups":        dataSourceGroups(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			// "pihole_ad_blocker_status": resourceAdBlockerStatus(),
 			"pihole_cname_record": resourceCNAMERecord(),
 			"pihole_dns_record":   resourceDNSRecord(),
-			// "pihole_group":             resourceGroup(),
 		},
 	}
 

@@ -124,7 +124,7 @@ func testAccCheckCNAMERecordDestroy(s *terraform.State) error {
 		}
 
 		if _, err := client.LocalCNAME.Get(context.Background(), r.Primary.ID); err != nil {
-			if errors.Is(err, pihole.ErrorLocalCNAMENotFound) {
+			if !errors.Is(err, pihole.ErrorLocalCNAMENotFound) {
 				return err
 			}
 		}

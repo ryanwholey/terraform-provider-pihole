@@ -72,10 +72,11 @@ func testAccCheckLocalDNSDestroy(s *terraform.State) error {
 		}
 
 		if _, err := client.LocalDNS.Get(context.Background(), r.Primary.ID); err != nil {
-			if errors.Is(err, pihole.ErrorLocalDNSNotFound) {
+			if !errors.Is(err, pihole.ErrorLocalDNSNotFound) {
 				return err
 			}
 		}
 	}
+
 	return nil
 }
