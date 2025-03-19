@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -57,6 +58,7 @@ func configure(version string, provider *schema.Provider) func(ctx context.Conte
 			URL:       d.Get("url").(string),
 			UserAgent: provider.UserAgent("terraform-provider-pihole", version),
 			CAFile:    d.Get("ca_file").(string),
+			SessionID: os.Getenv("__PIHOLE_SESSION_ID"),
 		}.Client(ctx)
 
 		if err != nil {

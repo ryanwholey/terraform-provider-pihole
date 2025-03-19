@@ -25,6 +25,9 @@ type Config struct {
 
 	// Custom CA file
 	CAFile string
+
+	// SessionID can be passed to reduce the number of requests against the /api/auth endpoint
+	SessionID string
 }
 
 func (c Config) Client(ctx context.Context) (*pihole.Client, error) {
@@ -55,6 +58,7 @@ func (c Config) Client(ctx context.Context) (*pihole.Client, error) {
 		Password:   c.Password,
 		Headers:    headers,
 		HttpClient: httpClient,
+		SessionID:  c.SessionID,
 	}
 
 	return pihole.New(config)

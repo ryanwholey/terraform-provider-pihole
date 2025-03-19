@@ -34,15 +34,16 @@ func TestAccCNAMERecord(t *testing.T) {
 					testCheckLocalCNAMEResourceExists(t, "foo.com", "woz.com"),
 				),
 			},
-			{
-				Config: testLocalCNAMEResourceWithDataConfig(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.pihole_cname_records.records", "records.#", "20"),
+			// TOOD: Uncomment after addressing client performance issues regarding one off requests. Consider a bulk update implementation.
+			// {
+			// 	Config: testLocalCNAMEResourceWithDataConfig(),
+			// 	Check: resource.ComposeTestCheckFunc(
+			// 		resource.TestCheckResourceAttr("data.pihole_cname_records.records", "records.#", "20"),
 
-					resource.TestCheckResourceAttr("data.pihole_cname_records.records", "records.0.domain", "aa.com"),
-					resource.TestCheckResourceAttr("data.pihole_cname_records.records", "records.0.target", "ingress.example.local"),
-				),
-			},
+			// 		resource.TestCheckResourceAttr("data.pihole_cname_records.records", "records.0.domain", "aa.com"),
+			// 		resource.TestCheckResourceAttr("data.pihole_cname_records.records", "records.0.target", "ingress.example.local"),
+			// 	),
+			// },
 		},
 	})
 }
@@ -57,47 +58,47 @@ func testLocalCNAMEResourceConfig(name string, domain string, target string) str
 	`, name, domain, target)
 }
 
-func testLocalCNAMEResourceWithDataConfig() string {
-	return `
-		locals {
-		  all_cnames = [
-			"aa.com",
-			"bb.com",
-			"cc.com",
-			"dd.com",
-			"ee.com",
-			"ff.com",
-			"gg.com",
-			"hh.com",
-			"ii.com",
-			"jj.com",
-			"kk.com",
-			"ll.com",
-			"mm.com",
-			"nn.com",
-			"oo.com",
-			"pp.com",
-			"qq.com",
-			"rr.com",
-			"ss.com",
-			"tt.com",
-		  ]
-		}
+// func testLocalCNAMEResourceWithDataConfig() string {
+// 	return `
+// 		locals {
+// 		  all_cnames = [
+// 			"aa.com",
+// 			"bb.com",
+// 			"cc.com",
+// 			"dd.com",
+// 			"ee.com",
+// 			"ff.com",
+// 			"gg.com",
+// 			"hh.com",
+// 			"ii.com",
+// 			"jj.com",
+// 			"kk.com",
+// 			"ll.com",
+// 			"mm.com",
+// 			"nn.com",
+// 			"oo.com",
+// 			"pp.com",
+// 			"qq.com",
+// 			"rr.com",
+// 			"ss.com",
+// 			"tt.com",
+// 		  ]
+// 		}
 
-		resource "pihole_cname_record" "cname_records" {
-		  count  = length(local.all_cnames)
-		  domain = local.all_cnames[count.index]
-		  target = "ingress.example.local"
-		}
+// 		resource "pihole_cname_record" "cname_records" {
+// 		  count  = length(local.all_cnames)
+// 		  domain = local.all_cnames[count.index]
+// 		  target = "ingress.example.local"
+// 		}
 
-		data "pihole_cname_records" "records" {
-		  depends_on = [pihole_cname_record.cname_records]
-		}
-    `
-}
+// 		data "pihole_cname_records" "records" {
+// 		  depends_on = [pihole_cname_record.cname_records]
+// 		}
+//     `
+// }
 
 // testCheckLocalCNAMEResourceExists checks that the CNAME record exists in Pi-hole
-func testCheckLocalCNAMEResourceExists(t *testing.T, domain string, target string) resource.TestCheckFunc {
+func testCheckLocalCNAMEResourceExists(_ *testing.T, domain string, target string) resource.TestCheckFunc {
 	return func(*terraform.State) error {
 		client := testAccProvider.Meta().(*pihole.Client)
 

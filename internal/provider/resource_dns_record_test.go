@@ -46,7 +46,7 @@ func testLocalDNSResourceConfig(name string, domain string, ip string) string {
 	`, name, domain, ip)
 }
 
-func testCheckLocalDNSResourceExists(t *testing.T, domain string, ip string) resource.TestCheckFunc {
+func testCheckLocalDNSResourceExists(_ *testing.T, domain string, ip string) resource.TestCheckFunc {
 	return func(*terraform.State) error {
 		client := testAccProvider.Meta().(*pihole.Client)
 
