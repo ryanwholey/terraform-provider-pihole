@@ -106,11 +106,6 @@ TAG=nightly make docker-run
 
 For further reading about Terraform acceptance tests, see Hashicorp's [documenation](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests) on acceptance tests.
 
-#### TFTest
-
-To assert that resources are created by the planned result of Terraform, the [Terraform tests chapter](https://developer.hashicorp.com/terraform/language/tests) is a good introduction on the topic.
-
-No such tests are yet implemented.
 
 ### Docs
 
