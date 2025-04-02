@@ -2,11 +2,15 @@ package provider
 
 import (
 	"context"
+	"errors"
+	"sync"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/ryanwholey/terraform-provider-pihole/internal/pihole"
+	pihole "github.com/ryanwholey/go-pihole"
 )
+
+var resourceDeleteMutex sync.Mutex
 
 // resourceCNAMERecord returns the CNAME Terraform resource management configuration
 func resourceCNAMERecord() *schema.Resource {
@@ -45,10 +49,7 @@ func resourceCNAMERecordCreate(ctx context.Context, d *schema.ResourceData, meta
 	domain := d.Get("domain").(string)
 	target := d.Get("target").(string)
 
-	_, err := client.CreateCNAMERecord(ctx, &pihole.CNAMERecord{
-		Domain: domain,
-		Target: target,
-	})
+	_, err := client.LocalCNAME.Create(ctx, domain, target)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -65,9 +66,9 @@ func resourceCNAMERecordRead(ctx context.Context, d *schema.ResourceData, meta i
 		return diag.Errorf("Could not load client in resource request")
 	}
 
-	record, err := client.GetCNAMERecord(ctx, d.Id())
+	record, err := client.LocalCNAME.Get(ctx, d.Id())
 	if err != nil {
-		if _, ok := err.(*pihole.NotFoundError); ok {
+		if errors.Is(err, pihole.ErrorLocalCNAMENotFound) {
 			d.SetId("")
 			return nil
 		}
@@ -93,7 +94,10 @@ func resourceCNAMERecordDelete(ctx context.Context, d *schema.ResourceData, meta
 		return diag.Errorf("Could not load client in resource request")
 	}
 
-	if err := client.DeleteCNAMERecord(ctx, d.Id()); err != nil {
+	resourceDeleteMutex.Lock()
+	defer resourceDeleteMutex.Unlock()
+
+	if err := client.LocalCNAME.Delete(ctx, d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 

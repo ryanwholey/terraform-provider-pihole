@@ -27,8 +27,6 @@ Configure the provider with credentials, or pass environment variables.
 provider "pihole" {
   url       = "https://pihole.domain.com" # PIHOLE_URL
   password  = var.pihole_password         # PIHOLE_PASSWORD
-
-  # api_token = var.pihole_api_token      # PIHOLE_API_TOKEN (experimental, requires Web Interface >= 5.11)
 }
 ```
 
@@ -41,7 +39,7 @@ There are a few ways to configure local providers. See the somewhat obscure [Ter
 One way to run a local provider is to build the project, move it to the Terraform plugins directory and then use a `required_providers` block to note the address and version.
 
 > [!NOTE]
-> Note the `/darwin_amd64/` path portion targets a Mac with an AMD64 processor,
+> Note the `/darwin_arm64/` path portion targets a Mac with an ARM64 processor,
 > see https://github.com/ryanwholey/terraform-provider-pihole/blob/main/.goreleaser.yml#L18-L27
 > for possible supported combinations.
 
@@ -49,9 +47,9 @@ One way to run a local provider is to build the project, move it to the Terrafor
 # from the project root
 go build .
 
-mkdir -p ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_amd64/
+mkdir -p ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_arm64/
 
-cp terraform-provider-pihole ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_amd64/terraform-provider-pihole_v0.0.1
+cp terraform-provider-pihole ~/.terraform.d/plugins/terraform.local/local/pihole/0.0.1/darwin_arm64/terraform-provider-pihole_v0.0.1
 ```
 
 In the Terraform workspace, use a `required_providers` block to target the locally built provider
@@ -81,8 +79,13 @@ make test
 
 #### Acceptance testing
 
-Run the following commands to test against a local Pi-hole server via [docker](https://docs.docker.com/engine/install/)
+The `make testall` command is prefixed with the `TF_ACC=1`. This tells go to include the tests that utilise the `helper/resource.Test()` functions.
 
+For further reading, please see Hashicorp's [documenation](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests) on acceptance tests.
+
+To setup a proper environment combining an instance of Pihole in a docker container with tests, some environment variables need to be set for the tests to make their requests to the correct location.
+
+Run the following commands to test against a local Pi-hole server via [docker](https://docs.docker.com/engine/install/)
 ```sh
 # Set the local Terraform provider environment variables
 export PIHOLE_URL=http://localhost:8080
@@ -103,17 +106,12 @@ TAG=nightly make docker-run
 
 For further reading about Terraform acceptance tests, see Hashicorp's [documenation](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests) on acceptance tests.
 
-#### TFTest
-
-To assert that resources are created by the planned result of Terraform, the [Terraform tests chapter](https://developer.hashicorp.com/terraform/language/tests) is a good introduction on the topic.
-
-No such tests are yet implemented.
 
 ### Docs
 
 Documentation is auto-generated via [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) from description fields within the provider package, as well as examples and templates from the `examples/` and `templates/` folders respectively.
 
-To generate the docs, ensure that `tfplugindocs` is installed, then run
+To generate the docs run
 
 ```sh
 make docs
