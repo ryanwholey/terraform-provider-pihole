@@ -28,7 +28,7 @@ resource "docker_container" "pihole" {
 
 provider "pihole" {
   url       = local.pihole_url
-  api_token = sha256(sha256(local.pihole_password))
+  password  = local.pihole_password
 }
 
 resource "null_resource" "pihole_wait" {

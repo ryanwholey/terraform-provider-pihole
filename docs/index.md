@@ -36,20 +36,6 @@ provider "pihole" {
   url      = "https://pihole.domain.com" # PIHOLE_URL
   password = var.pihole_password         # PIHOLE_PASSWORD
 }
-
-provider "pihole" {
-  url = "https://pihole.domain.com" # PIHOLE_URL
-
-  # Requires Pi-hole Web Interface >= 5.11.0
-  api_token = var.pihole_api_token # PIHOLE_API_TOKEN
-}
-
-provider "pihole" {
-  url = "https://pihole.domain.com"
-
-  # Pi-hole sets the API token to the admin password hashed twiced via SHA-256
-  api_token = sha256(sha256(var.pihole_password))
-}
 ```
 
 **Note**: Authenticating via `api_token` is currently experimental and requires a Pi-hole Web Interface version of `>= 5.11.0` (see [release notes](https://github.com/pi-hole/AdminLTE/releases/tag/v5.11)). The Pi-hole API has just recently began supporting API token authentication for specific resources. Currently the following resources are manageable via API token:
@@ -92,7 +78,7 @@ resource "docker_container" "pihole" {
 
 provider "pihole" {
   url       = local.pihole_url
-  api_token = sha256(sha256(local.pihole_password))
+  password  = local.pihole_password
 }
 
 resource "null_resource" "pihole_wait" {
