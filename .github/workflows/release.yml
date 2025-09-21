@@ -5,10 +5,81 @@ on:
       - 'v*'
 jobs:
   terraform-provider-release:
-    name: 'Terraform Provider Release'
-    uses: hashicorp/ghaction-terraform-provider-release/.github/workflows/community.yml@v5
-    secrets:
-      gpg-private-key: '${{ secrets.GPG_PRIVATE_KEY }}'
-      gpg-private-key-passphrase: '${{ secrets.PASSPHRASE }}'
-    with:
-      setup-go-version-file: 'go.mod'
+    name: Terraform Provider Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Import GPG key
+        id: import-gpg
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.PASSPHRASE }}
+          RUNNER_TEMP: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GPG_PRIVATE_KEY:-}" ]; then
+            echo "GPG_PRIVATE_KEY secret must be set" >&2
+            exit 1
+          fi
+
+          export GNUPGHOME="${RUNNER_TEMP}/gnupg"
+          mkdir -p "$GNUPGHOME"
+          chmod 700 "$GNUPGHOME"
+
+          printf '%s\n' "$GPG_PRIVATE_KEY" | gpg --batch --import
+
+          fingerprint=$(gpg --list-secret-keys --with-colons | awk -F: '/^fpr:/ {print $10; exit}')
+          if [ -z "$fingerprint" ]; then
+            echo "Unable to determine GPG fingerprint" >&2
+            exit 1
+          fi
+
+          echo "fingerprint=$fingerprint" >> "$GITHUB_OUTPUT"
+          printf 'GNUPGHOME=%s\n' "$GNUPGHOME" >> "$GITHUB_ENV"
+
+          if [ -n "${GPG_PASSPHRASE:-}" ]; then
+            preset_bin=$(command -v gpg-preset-passphrase || true)
+            if [ -z "$preset_bin" ]; then
+              for candidate in /usr/lib/gnupg2/gpg-preset-passphrase /usr/lib/gnupg/gpg-preset-passphrase; do
+                if [ -x "$candidate" ]; then
+                  preset_bin="$candidate"
+                  break
+                fi
+              done
+            fi
+
+            if [ -z "$preset_bin" ]; then
+              echo "gpg-preset-passphrase not found" >&2
+              exit 1
+            fi
+
+            gpgconf --kill gpg-agent || true
+            gpgconf --launch gpg-agent
+
+            while IFS= read -r keygrip; do
+              echo "Presetting passphrase for keygrip $keygrip"
+              "$preset_bin" --passphrase "$GPG_PASSPHRASE" "$keygrip"
+            done < <(gpg --list-secret-keys --with-colons | awk -F: '/^grp:/ {print $10}')
+
+            printf 'GPG_PASSPHRASE=%s\n' "$GPG_PASSPHRASE" >> "$GITHUB_ENV"
+          fi
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
+        with:
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_FINGERPRINT: ${{ steps.import-gpg.outputs.fingerprint }}
