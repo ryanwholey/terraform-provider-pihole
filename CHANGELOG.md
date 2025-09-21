@@ -1,3 +1,8 @@
+## fix: A bug fix (21-09-2024)
+
+* fix: replace deprecated set-output usage in release workflow
+
+
 ## [](https://github.com/ryanwholey/terraform-provider-pihole/compare/v0.0.11...v) (2022-02-20)
 
 * Bump go-pihole@0.0.4
