@@ -32,12 +32,9 @@ type Config struct {
 
 	// SessionID can be passed to reduce the number of requests against the /api/auth endpoint
 	SessionID string
-
-	// CSRFToken is needed for the secure session management
-	CSRFToken string
 }
 
-func doAuthRequest(ctx context.Context, cfg pihole.Config) (string, string, error) {
+func doAuthRequest(ctx context.Context, cfg pihole.Config) (string, error) {
 	authURL := strings.TrimRight(cfg.BaseURL, "/") + "/api/auth"
 
 	payload := map[string]string{"password": cfg.Password}
@@ -45,7 +42,7 @@ func doAuthRequest(ctx context.Context, cfg pihole.Config) (string, string, erro
 
 	req, err := http.NewRequestWithContext(ctx, "POST", authURL, bytes.NewReader(body))
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
 	req.Header = cfg.Headers.Clone()
@@ -53,37 +50,35 @@ func doAuthRequest(ctx context.Context, cfg pihole.Config) (string, string, erro
 
 	resp, err := cfg.HttpClient.Do(req)
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		b, _ := io.ReadAll(resp.Body)
-		return "", "", fmt.Errorf("auth failed: %s", b)
+		return "", fmt.Errorf("auth failed: %s", b)
 	}
 
 	var parsed struct {
 		Session struct {
-			Sid  string `json:"sid"`
-			Csrf string `json:"csrf"`
+			Sid string `json:"sid"`
 		} `json:"session"`
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&parsed); err != nil {
-		return "", "", err
+		return "", err
 	}
 
-	return parsed.Session.Sid, parsed.Session.Csrf, nil
+	return parsed.Session.Sid, nil
 }
 
 func loginAndCreateClient(ctx context.Context, cfg pihole.Config) (*pihole.Client, error) {
-	sid, csrf, err := doAuthRequest(ctx, cfg)
+	sid, err := doAuthRequest(ctx, cfg)
 	if err != nil {
 		return nil, err
 	}
 
 	cfg.SessionID = sid
-	cfg.CSRFToken = csrf
 
 	return pihole.New(cfg)
 }
@@ -117,7 +112,6 @@ func (c Config) Client(ctx context.Context) (*pihole.Client, error) {
 		Headers:    headers,
 		HttpClient: httpClient,
 		SessionID:  c.SessionID,
-		CSRFToken:  c.CSRFToken,
 	}
 
 	client, err := loginAndCreateClient(ctx, config)
