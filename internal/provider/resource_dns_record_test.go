@@ -37,6 +37,36 @@ func TestAccLocalDNS(t *testing.T) {
 	})
 }
 
+// TestAccLocalDNSParallel creates many records at Terraform's default parallelism of 10,
+// which lost records and failed with "local dns record not found" before requests were
+// serialized (#88).
+func TestAccLocalDNSParallel(t *testing.T) {
+	const count = 30
+
+	checks := []resource.TestCheckFunc{}
+	for i := 0; i < count; i++ {
+		checks = append(checks, testCheckLocalDNSResourceExists(t, fmt.Sprintf("parallel%02d.com", i), fmt.Sprintf("127.0.1.%d", i)))
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckLocalDNSDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(`
+					resource "pihole_dns_record" "parallel" {
+						count  = %d
+						domain = format("parallel%%02d.com", count.index)
+						ip     = "127.0.1.${count.index}"
+					}
+				`, count),
+				Check: resource.ComposeTestCheckFunc(checks...),
+			},
+		},
+	})
+}
+
 func testLocalDNSResourceConfig(name string, domain string, ip string) string {
 	return fmt.Sprintf(`
 		resource "pihole_dns_record" %q {
